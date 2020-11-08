@@ -8,7 +8,7 @@ export const getRecommondList = () => {
     method: 'GET',
     url: '/personalized',
     params: {
-      limit: 10
+      limit: 12
     }
   })
 }
@@ -30,5 +30,15 @@ export const getRecommondMV = () => {
   return request({
     method: 'GET',
     url: '/personalized/mv'
+  })
+}
+
+/**
+ * 推荐电台
+ */
+export const getRecommondChannel = () => {
+  return request({
+    method: 'GET',
+    url: 'personalized/djprogram'
   })
 }

@@ -14,7 +14,7 @@
         <i class="el-icon-video-camera-solid"></i>
         <span slot="title">MV</span>
       </el-menu-item>
-      <el-menu-item index='/mymusic' class="item">
+      <el-menu-item index='/app/my' class="item">
         <i class="el-icon-headset"></i>
         <span slot="title">我的</span>
       </el-menu-item>
@@ -46,5 +46,8 @@ export default {
 }
 .fm{
   margin-top: 100px;
+}
+.menu{
+  height: 700px;
 }
 </style>

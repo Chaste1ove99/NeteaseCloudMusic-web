@@ -83,3 +83,29 @@ export const checkMobile = user => {
     }
   })
 }
+
+/**
+ * 顶部栏搜索
+ */
+export const search = keywords => {
+  return request({
+    method: 'GET',
+    url: '/seach/multimatch',
+    params: {
+      keywords
+    }
+  })
+}
+
+/**
+ * 搜索建议
+ */
+export const searchAdvice = keywords => {
+  return request({
+    method: 'GET',
+    url: '/search/suggest',
+    params: {
+      keywords
+    }
+  })
+}

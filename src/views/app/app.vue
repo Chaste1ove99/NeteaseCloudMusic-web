@@ -28,7 +28,7 @@ export default {
 </script>
 <style scoped>
 .main {
-  position: absolute;
+  position: relative;
   margin-left: 100px;
 }
 .container {

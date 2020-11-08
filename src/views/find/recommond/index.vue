@@ -6,7 +6,7 @@
       <el-image
       class="image"
       :src="list[index].picUrl"
-      fit="fit"></el-image>
+      fit="cover"></el-image>
       <span class="demonstration decoration">{{ list[index].name }}</span>
   </div>
 </div>
@@ -17,6 +17,7 @@
       class="image"
       :src="content[index].picUrl"
       fit="fit"></el-image>
+       <span class="demonstration decoration content-name">{{ content[index].name }}</span>
   </div>
   <div class='content'>推荐MV</div>
 <div class="demo-image">
@@ -25,21 +26,33 @@
       class="image"
       :src="mv[index].picUrl"
       fit="fit"></el-image>
-       <span class="demonstration decoration artfont">{{ mv[index].artistName }}</span>
+       <span class="demonstration decoration artfont2">{{ mv[index].name }}</span>
+       <p class="demonstration decoration artfont1" style="clear:both">{{ mv[index].artistName }}</p>
   </div>
+  <div class='content'>推荐电台</div>
+<div class="demo-image  bottom">
+  <div class="block list4" v-for="(item, index) in channel" :key="index">
+      <el-image
+      class="image channel-image"
+      :src="channel[index].picUrl"
+      fit="fit"></el-image>
+       <span class="demonstration decoration channel-name">{{ channel[index].name }}</span>
+  </div>
+</div>
 </div>
 </div>
 </div>
 </template>
 <script>
-import { getRecommondList, getOnlyByCloud, getRecommondMV } from '@/api/recommond.js'
+import { getRecommondList, getOnlyByCloud, getRecommondMV, getRecommondChannel } from '@/api/recommond.js'
 export default {
   name: 'RecommondIndex',
   data () {
     return {
       list: [],
       content: [],
-      mv: []
+      mv: [],
+      channel: []
     }
   },
   created () {
@@ -53,6 +66,10 @@ export default {
       this.mv = res.data.result
       console.log(this.mv)
     })
+    getRecommondChannel().then(res => {
+      // console.log(res)
+      this.channel = res.data.result
+    })
   }
 }
 </script>
@@ -64,8 +81,9 @@ export default {
 .list1 {
   display: inline-block;
   width: 180px;
-  height: 250px;
-  padding: 10px;
+  height: 180px;
+  padding: 15px;
+  padding-bottom: 40px;
 }
 .decoration {
   float: left;
@@ -73,30 +91,53 @@ export default {
 .header {
   padding-left:20px;
   margin-left:3px;
-  margin-top:20px;
 }
 .list2 {
   display: inline-block;
   width: 220px;
-  height: 120px;
+  height: 80px;
   padding: 15px;
   padding-top: 10px;
 }
 .content {
-  margin-top:20px;
+  margin-top:75px;
   padding-left: 20px;
   margin-left:3px;
 }
 .list3 {
   display: inline-block;
   width: 200px;
-  height: 240px;
+  height: 150px;
   padding: 15px;
   padding-bottom: 10px;
 }
-.artfont {
+.artfont1 {
   font-family: 'DFKai-SB';
   color: grey;
   font-size: 12px;
+}
+.artfont2 {
+  display: inline;
+  font-size: 12px;
+}
+.list4 {
+  display: inline-block;
+  width: 500px;
+}
+.channel-image {
+  width:120px;
+  height: 120px;
+  float: left;
+  margin: 20px 10px 20px 20px;
+}
+.channel-name {
+  margin-top: 60px;
+  width: 300px;
+}
+.bottom {
+  margin-bottom: 20%;
+}
+.content-name {
+  font-size: 14px;
 }
 </style>

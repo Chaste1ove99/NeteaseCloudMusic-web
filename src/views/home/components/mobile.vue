@@ -46,7 +46,9 @@ export default {
             type: 'success',
             message: '登陆成功'
           })
-          this.$router.push('/app/find/recommond')
+          // 获取用户ID 储存到本地 或者这里用vuex调用也未尝不可
+          localStorage.setItem('userID', res.data.account.id)
+          this.$router.push('/app/find/1')
         } else if (res.data.code === 502) {
           this.$message({
             type: 'error',

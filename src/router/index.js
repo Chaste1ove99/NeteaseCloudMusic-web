@@ -8,6 +8,8 @@ import APP from '../views/app/app.vue'
 import Find from '../views/find/index.vue'
 import MV from '../views/mv/index.vue'
 import Recommond from '../views/find/recommond'
+import SongLists from '../views/find/songlist'
+import My from '../views/my/index.vue'
 
 Vue.use(VueRouter)
 
@@ -44,14 +46,23 @@ const routes = [
         path: '/app/find/1',
         name: 'Recommond',
         component: Recommond
+      },
+      {
+        path: '/app/find/2',
+        name: 'SongLists',
+        component: SongLists
       }]
     },
     {
       path: '/app/mv',
       name: 'MV',
       component: MV
-    }
-    ]
+    },
+    {
+      path: '/app/my',
+      name: 'MY',
+      component: My
+    }]
   }
 ]
 
