@@ -2,7 +2,7 @@
   <div class="recommond-page">
       <div class='header'>推荐歌单</div>
       <div class="demo-image">
-  <div class="block list1" v-for="(item, index) in list" :key="index">
+  <div class="block list1" v-for="(item, index) in list" :key="index" @click="intolist(item)">
       <el-image
       class="image"
       :src="list[index].picUrl"
@@ -45,6 +45,8 @@
 </template>
 <script>
 import { getRecommondList, getOnlyByCloud, getRecommondMV, getRecommondChannel } from '@/api/recommond.js'
+// import { getListDetail } from '@/api/songlist.js'
+// import router from '@/router'
 export default {
   name: 'RecommondIndex',
   data () {
@@ -52,7 +54,8 @@ export default {
       list: [],
       content: [],
       mv: [],
-      channel: []
+      channel: [],
+      newRoutes: []
     }
   },
   created () {
@@ -64,12 +67,17 @@ export default {
     })
     getRecommondMV().then(res => {
       this.mv = res.data.result
-      console.log(this.mv)
     })
     getRecommondChannel().then(res => {
       // console.log(res)
       this.channel = res.data.result
     })
+  },
+  methods: {
+    intolist (item) {
+      this.$router.push('/app/list?id=' + item.id)
+      this.$store.commit('getListID', item.id)
+    }
   }
 }
 </script>

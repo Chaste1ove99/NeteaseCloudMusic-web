@@ -1,5 +1,5 @@
 <template>
-    <div class='songlist'>
+    <div class='songlist' ref='top'>
         <div class='header'>精选歌单</div>
             <div class="choose"><el-button type="text" class="btn" @click="changetag('华语')">华语</el-button><el-button type="text" class="btn" @click="changetag('华语')">流行</el-button>
             <el-button type="text" class="btn" @click="changetag('摇滚')">摇滚</el-button><el-button type="text" class="btn" @click="changetag('民谣')">民谣</el-button>
@@ -9,52 +9,52 @@
   width="1200px">
     <el-button @click="dialogVisible = false" class="top-bar">全部歌单</el-button>
     <div class="yuyan"><div class="yuyan-img"><img  src="@/assets/icon/1.png"><div class="title">语种</div></div>
-  <div class="yuyan-block"><el-button class="yuyan-btn"  >华语</el-button>
-  <el-button class="yuyan-btn" >欧美</el-button>
-  <el-button class="yuyan-btn" >日语</el-button>
-  <el-button class="yuyan-btn" >汉语</el-button>
-  <el-button class="yuyan-btn" >粤语</el-button>
+  <div class="yuyan-block"><el-button class="yuyan-btn" @click="changetag('华语')">华语</el-button>
+  <el-button class="yuyan-btn" @click="changetag('欧美')">欧美</el-button>
+  <el-button class="yuyan-btn" @click="changetag('日语')">日语</el-button>
+  <el-button class="yuyan-btn" @click="changetag('韩语')">韩语</el-button>
+  <el-button class="yuyan-btn" @click="changetag('粤语')">粤语</el-button>
   </div></div>
      <div class="yuyan"><div class="style-img"><img  src="@/assets/icon/2.png"><div class="title">风格</div></div>
-  <div class="style-block"><div><el-button class="yuyan-btn"  >流行</el-button>
-  <el-button class="yuyan-btn" >摇滚</el-button>
-  <el-button class="yuyan-btn" >民谣</el-button>
-  <el-button class="yuyan-btn" >电子</el-button>
-  <el-button class="yuyan-btn" >舞曲</el-button>
-  <el-button class="yuyan-btn" >说唱</el-button>
-  <el-button class="yuyan-btn" >轻音乐</el-button>
-  <el-button class="yuyan-btn" >爵士</el-button>
-  <el-button class="yuyan-btn" >乡村</el-button>
-  <el-button class="yuyan-btn" >R&B/Soul</el-button>
-  <el-button class="yuyan-btn" >古典</el-button>
-  <el-button class="yuyan-btn" >民族</el-button>
-  <el-button class="yuyan-btn" >英伦</el-button>
+  <div class="style-block"><div><el-button class="yuyan-btn" @click="changetag('流行')" >流行</el-button>
+  <el-button class="yuyan-btn" @click="changetag('摇滚')">摇滚</el-button>
+  <el-button class="yuyan-btn" @click="changetag('民谣')">民谣</el-button>
+  <el-button class="yuyan-btn" @click="changetag('电子')">电子</el-button>
+  <el-button class="yuyan-btn" @click="changetag('舞曲')">舞曲</el-button>
+  <el-button class="yuyan-btn" @click="changetag('说唱')">说唱</el-button>
+  <el-button class="yuyan-btn" @click="changetag('轻音乐')">轻音乐</el-button>
+  <el-button class="yuyan-btn" @click="changetag('爵士')">爵士</el-button>
+  <el-button class="yuyan-btn" @click="changetag('乡村')">乡村</el-button>
+  <el-button class="yuyan-btn" @click="changetag('R&B/Soul')">R&B/Soul</el-button>
+  <el-button class="yuyan-btn" @click="changetag('古典')">古典</el-button>
+  <el-button class="yuyan-btn" @click="changetag('民族')">民族</el-button>
+  <el-button class="yuyan-btn" @click="changetag('英伦')">英伦</el-button>
   </div><div>
-  <el-button class="yuyan-btn" >金属</el-button>
-  <el-button class="yuyan-btn" >朋克</el-button>
-  <el-button class="yuyan-btn" >蓝调</el-button>
-  <el-button class="yuyan-btn" >雷鬼</el-button>
-  <el-button class="yuyan-btn" >世界音乐</el-button>
-  <el-button class="yuyan-btn" >拉丁</el-button>
-  <el-button class="yuyan-btn" >New Age</el-button>
-  <el-button class="yuyan-btn" >古风</el-button>
-  <el-button class="yuyan-btn" >后摇</el-button>
-  <el-button class="yuyan-btn" >Bossa Nova</el-button>
+  <el-button class="yuyan-btn" @click="changetag('金属')">金属</el-button>
+  <el-button class="yuyan-btn" @click="changetag('朋克')">朋克</el-button>
+  <el-button class="yuyan-btn" @click="changetag('蓝调')">蓝调</el-button>
+  <el-button class="yuyan-btn" @click="changetag('雷鬼')">雷鬼</el-button>
+  <el-button class="yuyan-btn" @click="changetag('世界音乐')" >世界音乐</el-button>
+  <el-button class="yuyan-btn" @click="changetag('拉丁')">拉丁</el-button>
+  <el-button class="yuyan-btn" @click="changetag('New Age')">New Age</el-button>
+  <el-button class="yuyan-btn" @click="changetag('古风')">古风</el-button>
+  <el-button class="yuyan-btn" @click="changetag('后摇')">后摇</el-button>
+  <el-button class="yuyan-btn" @click="changetag('Bossa Nova')">Bossa Nova</el-button>
   </div>
   </div></div>
      <div class="yuyan"><div class="yuyan-img"><img  src="@/assets/icon/3.png"><div class="title">场景</div></div>
-  <div class="yuyan-block"><el-button class="yuyan-btn"  >清晨</el-button>
-  <el-button class="yuyan-btn" >夜晚</el-button>
-  <el-button class="yuyan-btn" >学习</el-button>
-  <el-button class="yuyan-btn" >工作</el-button>
-  <el-button class="yuyan-btn" >午休</el-button>
-  <el-button class="yuyan-btn" >地铁</el-button>
-  <el-button class="yuyan-btn" >驾车</el-button>
-  <el-button class="yuyan-btn" >运动</el-button>
-  <el-button class="yuyan-btn" >酒吧</el-button>
-  <el-button class="yuyan-btn" >旅行</el-button>
-  <el-button class="yuyan-btn" >散步</el-button>
-    <el-button class="yuyan-btn" >下午茶</el-button>
+  <div class="yuyan-block"><el-button class="yuyan-btn" @click="changetag('清晨')" >清晨</el-button>
+  <el-button class="yuyan-btn" @click="changetag('夜晚')">夜晚</el-button>
+  <el-button class="yuyan-btn" @click="changetag('学习')">学习</el-button>
+  <el-button class="yuyan-btn" @click="changetag('工作')">工作</el-button>
+  <el-button class="yuyan-btn" @click="changetag('午休')">午休</el-button>
+  <el-button class="yuyan-btn" @click="changetag('地铁')">地铁</el-button>
+  <el-button class="yuyan-btn" @click="changetag('驾车')">驾车</el-button>
+  <el-button class="yuyan-btn" @click="changetag('运动')">运动</el-button>
+  <el-button class="yuyan-btn" @click="changetag('酒吧')">酒吧</el-button>
+  <el-button class="yuyan-btn" @click="changetag('旅行')">旅行</el-button>
+  <el-button class="yuyan-btn" @click="changetag('散步')">散步</el-button>
+    <el-button class="yuyan-btn" @click="changetag('下午茶')">下午茶</el-button>
   </div></div>
      <div class="yuyan"><div class="yuyan-img"><img  src="@/assets/icon/4.png"><div class="title">情感</div></div>
   <div class="yuyan-block"><el-button class="yuyan-btn"  >怀旧</el-button>
@@ -72,7 +72,7 @@
   </div></div>
 </el-dialog></div>
       <div class="demo-image">
-  <div class="block list1" v-for="(item, index) in playlist" :key="index">
+  <div class="block list1" v-for="(item, index) in playlist" :key="index" @click="intolist(item)">
       <el-image
       class="image"
       :src="playlist[index].coverImgUrl"
@@ -127,15 +127,12 @@ export default {
         this.playlist = res.data.playlists
         this.Sum = res.data.total
         this.currentPage = 1
-        console.log(res)
+        this.dialogVisible = false
       })
     },
-    handleClose (done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
+    intolist (item) {
+      this.$router.push('/app/list?id=' + item.id)
+      this.$store.commit('getListID', item.id)
     }
   }
 }

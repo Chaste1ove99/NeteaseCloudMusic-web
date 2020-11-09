@@ -34,3 +34,30 @@ export const userPlayList = userID => {
     }
   })
 }
+
+/**
+ * 获取用户详情
+ */
+export const getUserDetail = userID => {
+  return request({
+    method: 'GET',
+    url: '/user/detail',
+    params: {
+      uid: userID
+    }
+  })
+}
+
+/**
+ * 收藏/喜欢音乐
+ */
+export const toggerlike = (id, like) => {
+  return request({
+    method: 'POST',
+    url: '/like',
+    params: {
+      id,
+      like
+    }
+  })
+}

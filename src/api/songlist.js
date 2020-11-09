@@ -23,3 +23,16 @@ export const getCatList = () => {
     url: '/playlist/catlist'
   })
 }
+
+/**
+ * 获取歌单详情
+ */
+export const getListDetail = id => {
+  return request({
+    method: 'GET',
+    url: '/playlist/detail',
+    params: {
+      id
+    }
+  })
+}

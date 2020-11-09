@@ -1,6 +1,6 @@
 <template>
     <div class="user">
-            <div class="header"><span class="iconfont">&#xe62e;</span></div>
+            <div class="header">我的</div>
             <div class="function-list">
             <div class="item"><icon class="el-icon-cloudy icon"></icon><span>我的音乐云盘</span></div>
             <div class="item"><icon class="el-icon-headset icon"></icon><span>我的电台</span></div>
@@ -8,7 +8,7 @@
             </div>
             <div class="songlist">
                 <div class="top"><span class='create-list'>我创建的歌单</span><el-button icon="el-icon-plus" circle class='list-btn'></el-button></div>
-                <div class="list" v-for="(item,index) in playlist" :key="index">
+                <div class="list" v-for="(item,index) in playlist" :key="index" @click="intolist(item)">
               <el-image
               class="image"
              :src="item.coverImgUrl"
@@ -20,25 +20,28 @@
     </div>
 </template>
 <script>
-import { getlikelist, userPlayList } from '@/api/user.js'
+import { userPlayList } from '@/api/user.js'
 export default {
   name: 'MyIndex',
   data () {
     return {
       userID: 0,
-      playlist: []
+      playlist: [],
+      ids: []
     }
   },
   created () {
     userPlayList(this.userID).then(res => {
-      console.log(res)
+      // console.log(res)
       this.playlist = res.data.playlist
       this.playlist[0].name = '我喜欢的音乐'
     })
-    this.userID = localStorage.getItem('userID')
-    getlikelist(this.userID).then(res => {
-      console.log(res)
-    })
+  },
+  methods: {
+    intolist (item) {
+      this.$router.push('/app/list?id=' + item.id)
+      this.$store.commit('getListID', item.id)
+    }
   }
 }
 </script>
@@ -105,9 +108,9 @@ export default {
   .listtotal {
     position: relative;
     display: inline-block;
-    float: left;
     top: 30px;
     left: 105px;
+    float: left;
     padding-top: 10px;
   }
 </style>
