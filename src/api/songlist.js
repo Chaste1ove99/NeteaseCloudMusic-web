@@ -36,3 +36,18 @@ export const getListDetail = id => {
     }
   })
 }
+
+/**
+ * 获取歌单评论
+ */
+export const getListComment = (id, pageNum) => {
+  return request({
+    method: 'GET',
+    url: '/comment/playlist',
+    params: {
+      id,
+      limit: 20,
+      offset: (pageNum) * 20
+    }
+  })
+}

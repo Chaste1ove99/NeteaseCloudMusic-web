@@ -1,7 +1,7 @@
 <template>
     <div class="FindPage">
         <div class="header">
-            <el-menu :default-active="$route.path" class="el-menu-demo menu" mode="horizontal" router>
+            <el-menu :default-active.sync="$route.path" class="el-menu-demo menu" mode="horizontal" router>
   <el-menu-item index="1" class="item" >推荐</el-menu-item>
   <el-menu-item index="2" class="item">歌单</el-menu-item>
   <el-menu-item index="3" class="item">电台</el-menu-item>

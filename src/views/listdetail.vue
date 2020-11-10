@@ -48,7 +48,7 @@
     <div class="alb-bar"><span class="bar-title">专辑</span></div>
   </div>
   <div class="songblocks">
-    <div v-for="(item, index) in tracks" :key='index' class="song-border">
+    <div v-for="(item, index) in tracks" :key='index' class="song-border" @dblclick="playSong(item)">
       <span class="head-bar">{{item.head}}</span>
       <span class="dwl-bar"><i class="el-icon-download"/></span>
       <span class="dwl-bar" @click="togger(item.id,item.like)"><i v-if="item.like" class="el-icon-star-on"/><i v-else class="el-icon-star-off"></i></span>
@@ -57,7 +57,43 @@
     <span class="alb-bar">{{item.albums}}</span></div>
   </div>
 </div>
-<div class="comment-tab none" ref="comment-desk">123</div>
+<div class="comment-tab none" ref="comment-desk">
+  <div class="text">
+    <el-tiptap
+      v-model="content"
+      :extensions="extensions"
+      placeholder="留下你的评论 …"
+    />
+    <el-button class='comt-btn' round>评论</el-button>
+  </div>
+  <div class="comment-block">
+    <div class="hot-comt" v-if='hotcomment'>
+      <div class="hot-title" v-if='hotcomment'>精彩评论</div>
+      <div v-for="(item,index) in hotcomment" :key="index" class="comt-block">
+        <el-image class="comter-img" :src='item.user.avatarUrl' fit='fit'></el-image>
+        <div class="comter-detail">
+        <div class="comter-name">{{item.user.nickname}}: <span class="comter-cont">{{item.content}}</span></div>
+        <div class="comter-time">{{item.time}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="comt">最近评论({{Sum}})</div>
+    <div v-for="(item,index) in comment" :key="index" class="comt-block">
+        <el-image class="comter-img" :src='item.user.avatarUrl' fit='fit'></el-image>
+        <div class="comter-detail">
+        <div class="comter-name">{{item.user.nickname}}: <span class="comter-cont">{{item.content}}</span></div>
+        <div class="comter-time">{{item.time}}</div>
+        </div>
+      </div>
+      <el-pagination
+  class="page"
+  page-size=20
+  @current-change='changePage'
+  :current-page.sync="currentPage"
+  :total="Sum">
+</el-pagination>
+  </div>
+  </div>
 <div class="collect-tab none" ref="collect-desk">
   <div>
     <div v-for="(item, index) in listdetails.subscribers" :key="index" class="sub-container">
@@ -79,9 +115,10 @@
     </div>
 </template>
 <script>
-import { getListDetail } from '@/api/songlist.js'
+import { getListDetail, getListComment } from '@/api/songlist.js'
 import { getlikelist, toggerlike } from '@/api/user.js'
-import { getSongDetail } from '@/api/song.js'
+import { getSongDetail, getSongUrl } from '@/api/song.js'
+import { Doc, Text, Paragraph, Heading, Bold, Underline, Italic, Strike, ListItem, BulletList, OrderedList } from 'element-tiptap'
 export default {
   name: 'ListDetailIndex',
   data () {
@@ -90,12 +127,31 @@ export default {
       description: '',
       elIcon: 'el-icon-arrow-down',
       activeName: 'first',
-      song: { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0 },
+      song: { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' },
       tracks: [],
       localTime: 0,
       userID: 0,
       ids: [],
-      activeIndex: '1'
+      activeIndex: '1',
+      extensions: [
+        new Doc(),
+        new Text(),
+        new Paragraph(),
+        new Heading({ level: 5 }),
+        new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
+        new Underline({ bubble: true, menubar: false }), // 在气泡菜单而不在菜单栏中渲染菜单按钮
+        new Italic(),
+        new Strike(),
+        new ListItem(),
+        new BulletList(),
+        new OrderedList()
+      ],
+      content: '',
+      comment: [],
+      hotcomment: [],
+      Sum: 0,
+      currentPage: 1,
+      intoPlaying: { id: 0, url: '', name: '', singer: '', picUrl: '' }
     }
   },
   created () {
@@ -107,6 +163,23 @@ export default {
         // console.log(this.listdetails.description)
         // this.description = this.listdetails.description.replace(/\n/g, '<br />')
         this.userID = localStorage.getItem('userID')
+        // 获取歌单评论
+        getListComment(this.$route.query.id, 0).then(res => {
+          // console.log(res)
+          this.Sum = res.data.total
+          this.comment = []
+          this.hotcomment = []
+          this.comment = res.data.comments
+          this.hotcomment = res.data.hotComments
+          // 转化评论时间戳问题
+          // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
+          for (let i = 0; i < this.comment.length; i++) {
+            this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
+          }
+          for (let i = 0; i < this.hotcomment.length; i++) {
+            this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
+          }
+        })
         // 判断是不是小红心歌曲
         getlikelist(this.userID).then(res => {
           this.ids = res.data.ids
@@ -122,12 +195,13 @@ export default {
           }
           // console.log(this.ids)
         })
-        this.getLocalTime(this.listdetails.createTime)
+        // 转化作者时间戳
+        this.getLocalCreateTime(this.listdetails.createTime)
         for (let i = 0; i < this.listdetails.tracks.length; i++) {
           if (this.listdetails.tracks[i].name.length < 22) {
             this.song.name = this.listdetails.tracks[i].name
           } else {
-            this.song.name = this.listdetails.tracks[i].name.slice(0, 21) + '...'
+            this.song.name = this.listdetails.tracks[i].name.slice(0, 25) + '...'
           }
           if (this.listdetails.tracks[i].al.name.length < 15) {
             this.song.albums = this.listdetails.tracks[i].al.name
@@ -140,9 +214,11 @@ export default {
             this.song.head = (i + 1)
           }
           this.song.singer = this.listdetails.tracks[i].ar[0].name
+          this.song.picUrl = this.listdetails.tracks[i].al.picUrl
           this.song.id = this.listdetails.tracks[i].id
+          this.song.index = i
           this.tracks.push(this.song)
-          this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0 }
+          this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' }
         }
       })
     } else {
@@ -165,8 +241,8 @@ export default {
         console.log(res)
       })
     },
-    // 转化时间戳
-    getLocalTime (nS) {
+    // 转化作者时间戳
+    getLocalCreateTime (nS) {
       var date = new Date(nS)
       var Y = date.getFullYear() + '-'
       var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
@@ -176,7 +252,18 @@ export default {
       var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
       var strDate = Y + M + D + h + m + s
       this.localTime = strDate.slice(0, 10)
-      console.log(this.localTime)
+    },
+    // 转化评论时间戳
+    getLocalCommentTime (nS) {
+      var date = new Date(nS)
+      var Y = date.getFullYear() + '-'
+      var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+      var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+      var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+      var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+      var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+      var strDate = Y + M + D + h + m + s
+      return strDate.slice(0, 10)
     },
     // 收藏切换
     togger (id, like) {
@@ -207,6 +294,62 @@ export default {
       this.$refs['song-desk'].classList.add('none')
       this.$refs['comment-desk'].classList.add('none')
       this.$refs['collect-desk'].classList.remove('none')
+    },
+    // 评论翻页功能
+    changePage (page) {
+      const pageNum = page - 1
+      getListComment(this.$route.query.id, pageNum).then(res => {
+        // console.log(res)
+        this.Sum = res.data.total
+        this.comment = []
+        this.hotcomment = []
+        this.comment = res.data.comments
+        this.hotcomment = res.data.hotComments
+        // 转化评论时间戳问题
+        // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
+        for (let i = 0; i < this.comment.length; i++) {
+          this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
+        }
+        for (let i = 0; i < this.hotcomment.length; i++) {
+          this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
+        }
+      })
+    },
+    // 双击获取音乐url并且播放功能
+    playSong (item) {
+      // 如果双击的是正在播放的 直接终止流程
+      if (item.id === this.intoPlaying.id) {
+        return false
+      } else {
+        for (let i = 0; i < this.tracks.length; i++) {
+          getSongUrl(this.tracks[i].id).then(res => {
+            this.tracks[i].url = res.data.data[0].url
+          })
+        }
+        getSongUrl(item.id).then(res => {
+          // console.log(res)
+          // 把歌曲有关数据放在本地储存 实现跨组件通信
+          this.intoPlaying.singer = item.singer
+          this.intoPlaying.name = item.name
+          this.intoPlaying.id = item.id
+          this.intoPlaying.url = res.data.data[0].url
+          this.intoPlaying.picUrl = item.picUrl
+          this.intoPlaying.index = item.index
+          // 本地储存只能储存JSON字符串
+          // 否则对象只显示obj obj
+          // 必须先把对象转化才能储存
+          // window.localStorage.setItem('intoPlaying', JSON.stringify(this.intoPlaying))
+          // 同一页面监听本地储存变化
+          // 必要要定义新的本地储存方式
+          // 这里使用vuex监听
+          this.$store.commit('intoplaying', this.intoPlaying)
+          // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
+          // 当页面刷新后保证上次播放的音乐不丢失
+          window.localStorage.setItem('intoPlaying', JSON.stringify(this.intoPlaying))
+          // 应该把歌单传到footer组件中
+          this.$store.commit('publishList', this.tracks)
+        })
+      }
     }
   }
 }
@@ -371,5 +514,46 @@ export default {
   .suber-siganature {
     font-size: 12px;
     color: #b2adab;
+  }
+  .hot-comt {
+    margin-top: 60px;
+    width: 800px;
+  }
+  .comt-btn {
+    float: right;
+    margin-top: 10px;
+  }
+  .comter-img {
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
+    display: inline-block;
+  }
+  .comter-detail {
+    display: inline-block;
+    width: 700px;
+    height: 100%;
+    margin-left: 20px;
+    vertical-align: top;
+  }
+  .comt-block {
+    margin-top: 30px;
+  }
+  .comter-time {
+    color: #b2adab;
+    font-size: 10px;
+  }
+  .comter-name {
+    color: #409EFF;
+    font-size: 14px;
+  }
+  .comter-cont {
+    color: black;
+  }
+  .comt {
+    margin-top: 30px;
+  }
+  .comment-block {
+    margin-bottom: 20%;
   }
 </style>

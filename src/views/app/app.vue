@@ -8,7 +8,7 @@
     <router-view></router-view>
     </el-main>
     <el-container class="footer">
-    <el-footer>
+    <el-footer class="el-ft">
       <footer-player></footer-player>
        </el-footer>
     </el-container>
@@ -43,7 +43,10 @@ export default {
   bottom: 0;
   right: 0;
   left: 0;
-  border: 1px solid black;
   height: 15%;
+  width: 100%;
+}
+.el-ft {
+  padding: 0;
 }
 </style>
