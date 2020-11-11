@@ -7,7 +7,7 @@ export const getSongDetail = id => {
     method: 'GET',
     url: '/song/detail',
     params: {
-      id
+      ids: id
     }
   })
 }

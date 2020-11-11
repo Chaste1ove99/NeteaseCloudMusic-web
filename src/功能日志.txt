@@ -1,8 +1,46 @@
 目前已知BUG
 1.寻找页的图标和侧栏图标 激活时产生冲突
 2.我喜欢歌单中的最热评论显示冲突
-2.audio控件与播放器的图标问题
+3.audio控件与播放器的图标问题
+4.接口限制 收藏音乐列表更新不及时
 
 当前未解决
-1.上一首是歌单第一首歌时 会造成播放停止
-2.下一首是歌单最后一首歌时 会造成播放停止
+// 1.上一首是歌单第一首歌时 会造成播放停止(解决)
+// 2.下一首是歌单最后一首歌时 会造成播放停止(解决)
+3.播放器选择收藏后 歌单更新问题 (速度实在太慢) (重新渲染不需要时间 但接口更换数据太慢了)
+4.刷新后有播放键图标问题
+5.在播放器取消收藏后 刷新页面会出现播放器读取本地数据 收藏图标还在的问题
+
+getlikelist(this.userID).then(res => {
+      console.log(res)
+      this.ids = res.data.ids
+      for (let i = 0; i < this.ids.length; i++) {
+        getSongDetail(this.ids[i]).then(res => {
+          // console.log(res.data.songs[0])
+          if (res.data.songs[0].name.length < 21) {
+            this.song.name = res.data.songs[0].name
+          } else {
+            this.song.name = res.data.songs[0].name.slice(0, 20) + '...'
+          }
+          if (res.data.songs[0].al.name.length < 17) {
+            this.song.albums = res.data.songs[0].al.name
+          } else {
+            this.song.albums = res.data.songs[0].al.name.slice(0, 16) + '...'
+          }
+          this.song.singer = res.data.songs[0].ar[0].name
+          this.song.id = this.ids[i]
+          this.song.index = i
+          this.song.picUrl = res.data.songs[0].al.picUrl
+          if (i < 9) {
+            this.song.head = '0' + (i + 1)
+          } else {
+            this.song.head = (i + 1)
+          }
+          getSongUrl(this.ids[i]).then(res => {
+            this.song.url = res.data.data[0].url
+            this.tracks.push(this.song)
+            this.song = { name: '', albums: '', singer: '', time: '', head: '', like: true, id: 0, picUrl: '', url: '' }
+          })
+        })
+      }
+    })

@@ -76,7 +76,7 @@
       <el-image
       class="image"
       :src="playlist[index].coverImgUrl"
-      fit="fit"></el-image>
+      fit="fill"></el-image>
       <span class="demonstration decoration">{{ playlist[index].name }}</span>
   </div>
   </div>

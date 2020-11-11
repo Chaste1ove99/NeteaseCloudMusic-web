@@ -5,19 +5,19 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    ListID: '',
     playing: {},
-    playingList: {}
+    playingList: {},
+    code: 1
   },
   mutations: {
-    getListID (state, id) {
-      state.ListID = id
-    },
     intoplaying (state, intoPlaying) {
       state.playing = intoPlaying
     },
     publishList (state, tracks) {
       state.playingList = tracks
+    },
+    refresh (state, code) {
+      state.code = code
     }
   },
   actions: {

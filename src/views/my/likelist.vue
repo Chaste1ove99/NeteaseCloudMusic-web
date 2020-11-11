@@ -1,13 +1,13 @@
 <template>
     <div class='songlist'>
-      <div class="header">
+        <div class="header">
         <div class="demo-image">
     <el-image
       style="width: 220px; border-radius:8px"
       :src="listdetails.coverImgUrl"
       fit="fill"></el-image>
       <div class="demo-datails">
-        <div class="title"><div class="label">歌单</div>{{listdetails.name}}</div>
+        <div class="title"><div class="label">歌单</div>我喜欢的音乐</div>
         <div class="creator"><div class="demo-image">
     <el-image
     class="creator-img"
@@ -49,8 +49,8 @@
   </div>
   <div class="songblocks">
     <div v-for="(item, index) in tracks" :key='index' class="song-border" @dblclick="playSong(item)">
-      <span class="head-bar">{{item.head}}</span>
-      <span class="dwl-bar" @click="togger(item.id,item.like)"><i v-if="item.like" class="el-icon-star-on"/><i v-else class="el-icon-star-off"></i></span>
+      <span class="dwl-bar">{{item.head}}</span>
+           <span class="dwl-bar" @click="togger(item.id,item.like)"><i v-if="item.like" class="el-icon-star-on"/><i v-else class="el-icon-star-off"></i></span>
       <span class="song-bar">{{item.name}}</span>
     <span class="singer-bar">{{item.singer}}</span>
     <span class="alb-bar">{{item.albums}}</span></div>
@@ -116,17 +116,18 @@
 <script>
 import { getListDetail, getListComment } from '@/api/songlist.js'
 import { getlikelist, toggerlike } from '@/api/user.js'
-import { getSongUrl } from '@/api/song.js'
+import { getSongUrl, getSongDetail } from '@/api/song.js'
 import { Doc, Text, Paragraph, Heading, Bold, Underline, Italic, Strike, ListItem, BulletList, OrderedList } from 'element-tiptap'
 export default {
-  name: 'ListDetailIndex',
+  name: 'likeListIndex',
   data () {
     return {
+      listID: 0,
       listdetails: {},
       description: '',
       elIcon: 'el-icon-arrow-down',
       activeName: 'first',
-      song: { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' },
+      song: { name: '', albums: '', singer: '', time: '', head: '', like: true, id: 0, picUrl: '', index: 0, url: '', i: 0 },
       tracks: [],
       localTime: 0,
       userID: 0,
@@ -154,77 +155,60 @@ export default {
     }
   },
   created () {
-    if (this.$route.query.id) {
-      // console.log(this.$route.query.id)
-      getListDetail(this.$route.query.id).then(res => {
-        // 没做付费的那个判断
-        this.listdetails = res.data.playlist
-        // console.log(this.listdetails.description)
-        // this.description = this.listdetails.description.replace(/\n/g, '<br />')
-        this.userID = localStorage.getItem('userID')
-        // 获取歌单评论
-        getListComment(this.$route.query.id, 0).then(res => {
-          // console.log(res)
-          this.Sum = res.data.total
-          this.comment = []
-          this.hotcomment = []
-          this.comment = res.data.comments
-          this.hotcomment = res.data.hotComments
-          // 转化评论时间戳问题
-          // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
-          for (let i = 0; i < this.comment.length; i++) {
-            this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
-          }
-          for (let i = 0; i < this.hotcomment.length; i++) {
-            this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
-          }
-        })
-        // 判断是不是小红心歌曲
-        getlikelist(this.userID).then(res => {
-          console.log(res)
-          this.ids = res.data.ids
-          for (let j = 0; j < this.ids.length; j++) {
-            for (let i = 0; i < this.tracks.length; i++) {
-              if (this.ids[j] === this.tracks[i].id) {
-                this.tracks[i].like = true
-              }
-            }
-            // if (this.listdetails.tracks[i].id === this.ids[j]) {
-            // console.log('123')
-            // }
-          }
-          // console.log(this.ids)
-        })
-        // 转化作者时间戳
-        this.getLocalCreateTime(this.listdetails.createTime)
-        for (let i = 0; i < this.listdetails.tracks.length; i++) {
-          if (this.listdetails.tracks[i].name.length < 22) {
-            this.song.name = this.listdetails.tracks[i].name
-          } else {
-            this.song.name = this.listdetails.tracks[i].name.slice(0, 25) + '...'
-          }
-          if (this.listdetails.tracks[i].al.name.length < 15) {
-            this.song.albums = this.listdetails.tracks[i].al.name
-          } else {
-            this.song.albums = this.listdetails.tracks[i].al.name.slice(0, 14) + '...'
-          }
-          if (i < 9) {
-            this.song.head = '0' + (i + 1)
-          } else {
-            this.song.head = (i + 1)
-          }
-          this.song.singer = this.listdetails.tracks[i].ar[0].name
-          this.song.picUrl = this.listdetails.tracks[i].al.picUrl
-          this.song.id = this.listdetails.tracks[i].id
-          this.song.index = i
-          this.tracks.push(this.song)
-          this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' }
+    this.userID = localStorage.getItem('userID')
+    this.listID = localStorage.getItem('ListID')
+    // 没做付费的那个判断
+    // 存在异步请求的嵌套 所以极其容易造成顺序混乱
+    // 原来的代码在功能日志里 亲测存在bug
+    getListDetail(this.listID).then(res => {
+      // 没做付费的那个判断
+      this.listdetails = res.data.playlist
+      // console.log(this.listdetails.description)
+      // this.description = this.listdetails.description.replace(/\n/g, '<br />')
+      this.userID = localStorage.getItem('userID')
+      // 获取歌单评论
+      getListComment(this.listID, 0).then(res => {
+        // console.log(res)
+        this.Sum = res.data.total
+        this.comment = []
+        this.hotcomment = []
+        this.comment = res.data.comments
+        this.hotcomment = res.data.hotComments
+        // 转化评论时间戳问题
+        // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
+        for (let i = 0; i < this.comment.length; i++) {
+          this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
+        }
+        for (let i = 0; i < this.hotcomment.length; i++) {
+          this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
         }
       })
-    } else {
-      this.$message.error('您的页面找不到啦')
-      this.$router.go(-1)
-    }
+      for (let i = 0; i < this.listdetails.tracks.length; i++) {
+        if (this.listdetails.tracks[i].name.length < 22) {
+          this.song.name = this.listdetails.tracks[i].name
+        } else {
+          this.song.name = this.listdetails.tracks[i].name.slice(0, 25) + '...'
+        }
+        if (this.listdetails.tracks[i].al.name.length < 15) {
+          this.song.albums = this.listdetails.tracks[i].al.name
+        } else {
+          this.song.albums = this.listdetails.tracks[i].al.name.slice(0, 14) + '...'
+        }
+        if (i < 9) {
+          this.song.head = '0' + (i + 1)
+        } else {
+          this.song.head = (i + 1)
+        }
+        this.song.singer = this.listdetails.tracks[i].ar[0].name
+        this.song.picUrl = this.listdetails.tracks[i].al.picUrl
+        this.song.id = this.listdetails.tracks[i].id
+        this.song.index = i
+        this.tracks.push(this.song)
+        this.song = { name: '', albums: '', singer: '', time: '', head: '', like: true, id: 0, picUrl: '', url: '', index: 0 }
+      }
+      // 转化作者时间戳
+      this.getLocalCreateTime(this.listdetails.createTime)
+    })
   },
   methods: {
     open () {
@@ -294,7 +278,7 @@ export default {
     // 评论翻页功能
     changePage (page) {
       const pageNum = page - 1
-      getListComment(this.$route.query.id, pageNum).then(res => {
+      getListComment(this.$store.state.ListID, pageNum).then(res => {
         // console.log(res)
         this.Sum = res.data.total
         this.comment = []
@@ -359,79 +343,65 @@ export default {
       if (val === 0) {
         this.tracks = []
         // 重新渲染一次数据
-        if (this.$route.query.id) {
-        // console.log(this.$route.query.id)
-          getListDetail(this.$route.query.id).then(res => {
-            // 没做付费的那个判断
-            this.listdetails = res.data.playlist
-            // console.log(this.listdetails.description)
-            // this.description = this.listdetails.description.replace(/\n/g, '<br />')
-            this.userID = localStorage.getItem('userID')
-            // 获取歌单评论
-            getListComment(this.$route.query.id, 0).then(res => {
-              // console.log(res)
-              this.Sum = res.data.total
-              this.comment = []
-              this.hotcomment = []
-              this.comment = res.data.comments
-              this.hotcomment = res.data.hotComments
-              // 转化评论时间戳问题
-              // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
-              for (let i = 0; i < this.comment.length; i++) {
-                this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
-              }
-              for (let i = 0; i < this.hotcomment.length; i++) {
-                this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
-              }
-            })
-            // 判断是不是小红心歌曲
-            getlikelist(this.userID).then(res => {
-              this.ids = res.data.ids
-              for (let j = 0; j < this.ids.length; j++) {
-                for (let i = 0; i < this.tracks.length; i++) {
-                  if (this.ids[j] === this.tracks[i].id) {
-                    this.tracks[i].like = true
-                  }
-                }
-                // if (this.listdetails.tracks[i].id === this.ids[j]) {
-                // console.log('123')
-                // }
-              }
-              // console.log(this.ids)
-            })
-            // 转化作者时间戳
-            this.getLocalCreateTime(this.listdetails.createTime)
-            for (let i = 0; i < this.listdetails.tracks.length; i++) {
-              if (this.listdetails.tracks[i].name.length < 22) {
-                this.song.name = this.listdetails.tracks[i].name
+        this.userID = localStorage.getItem('userID')
+        // 没做付费的那个判断
+        getlikelist(this.userID).then(res => {
+          this.ids = res.data.ids
+          for (let i = 0; i < this.ids.length; i++) {
+            getSongDetail(this.ids[i]).then(res => {
+              if (res.data.songs[0].name.length < 21) {
+                this.song.name = res.data.songs[0].name
               } else {
-                this.song.name = this.listdetails.tracks[i].name.slice(0, 25) + '...'
+                this.song.name = res.data.songs[0].name.slice(0, 20) + '...'
               }
-              if (this.listdetails.tracks[i].al.name.length < 15) {
-                this.song.albums = this.listdetails.tracks[i].al.name
+              if (res.data.songs[0].al.name.length < 17) {
+                this.song.albums = res.data.songs[0].al.name
               } else {
-                this.song.albums = this.listdetails.tracks[i].al.name.slice(0, 14) + '...'
+                this.song.albums = res.data.songs[0].al.name.slice(0, 16) + '...'
               }
+              this.song.singer = res.data.songs[0].ar[0].name
+              this.song.id = this.ids[i]
+              this.song.picUrl = res.data.songs[0].al.picUrl
               if (i < 9) {
                 this.song.head = '0' + (i + 1)
               } else {
                 this.song.head = (i + 1)
               }
-              this.song.singer = this.listdetails.tracks[i].ar[0].name
-              this.song.picUrl = this.listdetails.tracks[i].al.picUrl
-              this.song.id = this.listdetails.tracks[i].id
-              this.song.index = i
+              getSongUrl(this.ids[i]).then(res => {
+                this.song.url = res.data.data[0].url
+              })
               this.tracks.push(this.song)
-              this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' }
+              this.song = { name: '', albums: '', singer: '', time: '', head: '', like: true, id: 0, picUrl: '', url: '' }
+            })
+          }
+        })
+        this.listID = localStorage.getItem('ListID')
+        getListDetail(this.listID).then(res => {
+          this.listdetails = res.data.playlist
+          // 获取歌单评论
+          getListComment(this.listID, 0).then(res => {
+            this.Sum = res.data.total
+            this.comment = []
+            this.hotcomment = []
+            this.comment = res.data.comments
+            this.hotcomment = res.data.hotComments
+            // 转化评论时间戳问题
+            // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
+            for (let i = 0; i < this.comment.length; i++) {
+              this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
+            }
+            for (let i = 0; i < this.hotcomment.length; i++) {
+              this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
             }
           })
-        } else {
-          this.$message.error('您的页面找不到啦')
-          this.$router.go(-1)
-        }
-        this.$store.commit('refresh', 1)
+          // 转化作者时间戳
+          this.getLocalCreateTime(this.listdetails.createTime)
+        })
+      } else {
+        this.$message.error('您的页面找不到啦')
+        this.$router.go(-1)
       }
-      console.log(val)
+      this.$store.commit('refresh', 1)
     }
   }
 }

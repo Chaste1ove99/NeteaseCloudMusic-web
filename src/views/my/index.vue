@@ -8,7 +8,7 @@
             </div>
             <div class="songlist">
                 <div class="top"><span class='create-list'>我创建的歌单</span><el-button icon="el-icon-plus" circle class='list-btn'></el-button></div>
-                <div class="list" v-for="(item,index) in playlist" :key="index" @click="intolist(item)">
+                <div class="list" v-for="(item,index) in playlist" :key="index" @click="intolist(item, index)">
               <el-image
               class="image"
              :src="item.coverImgUrl"
@@ -31,16 +31,20 @@ export default {
     }
   },
   created () {
-    userPlayList(this.userID).then(res => {
-      // console.log(res)
+    userPlayList(localStorage.getItem('userID')).then(res => {
+      console.log(res)
       this.playlist = res.data.playlist
       this.playlist[0].name = '我喜欢的音乐'
     })
   },
   methods: {
-    intolist (item) {
-      this.$router.push('/app/list?id=' + item.id)
-      this.$store.commit('getListID', item.id)
+    intolist (item, index) {
+      if (index === 0) {
+        localStorage.setItem('ListID', item.id)
+        this.$router.push('/app/my/likelist')
+      } else {
+        this.$router.push('/app/list?id=' + item.id)
+      }
     }
   }
 }

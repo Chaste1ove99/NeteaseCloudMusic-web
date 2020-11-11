@@ -11,6 +11,13 @@ import Recommond from '../views/find/recommond'
 import SongLists from '../views/find/songlist'
 import My from '../views/my/index.vue'
 import ListDetail from '../views/listdetail.vue'
+import LikeList from '../views/my/likelist.vue'
+import Channel from '../views/find/channel'
+import newSong from '../views/find/newsong'
+import Rank from '../views/find/rank'
+import Selected from '../views/mv/selected'
+import Exclusive from '../views/mv/exclusive'
+import AllMV from '../views/mv/allMV'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -59,17 +66,52 @@ const routes = [
         path: '/app/find/2',
         name: 'SongLists',
         component: SongLists
+      },
+      {
+        path: '/app/find/3',
+        name: 'Channel',
+        component: Channel
+      },
+      {
+        path: '/app/find/4',
+        name: 'RANK',
+        component: Rank
+      },
+      {
+        path: '/app/find/5',
+        name: 'NewSong',
+        component: newSong
       }]
     },
     {
       path: '/app/mv',
       name: 'MV',
-      component: MV
+      component: MV,
+      children: [{
+        path: '/app/mv/1',
+        name: 'Selected',
+        component: Selected
+      },
+      {
+        path: '/app/mv/2',
+        name: 'Exclusive',
+        component: Exclusive
+      },
+      {
+        path: '/app/mv/3',
+        name: 'AllMV',
+        component: AllMV
+      }]
     },
     {
       path: '/app/my',
       name: 'MY',
       component: My
+    },
+    {
+      path: '/app/my/likelist',
+      name: 'Likelist',
+      component: LikeList
     },
     // 别想着追加什么动态路由
     // 最简单的方法依然是利用query参数 实现新页面的定义

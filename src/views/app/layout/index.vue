@@ -10,7 +10,7 @@
         <i class="el-icon-s-grid"></i>
         <span slot="title">发现</span>
       </el-menu-item>
-      <el-menu-item index='/app/mv' class="item">
+      <el-menu-item index='/app/mv/1' class="item">
         <i class="el-icon-video-camera-solid"></i>
         <span slot="title">MV</span>
       </el-menu-item>

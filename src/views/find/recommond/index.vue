@@ -6,7 +6,7 @@
       <el-image
       class="image"
       :src="list[index].picUrl"
-      fit="cover"></el-image>
+      fit="fill"></el-image>
       <span class="demonstration decoration">{{ list[index].name }}</span>
   </div>
 </div>
@@ -16,7 +16,7 @@
       <el-image
       class="image"
       :src="content[index].picUrl"
-      fit="fit"></el-image>
+      fit="fill"></el-image>
        <span class="demonstration decoration content-name">{{ content[index].name }}</span>
   </div>
   <div class='content'>推荐MV</div>
@@ -25,7 +25,7 @@
       <el-image
       class="image"
       :src="mv[index].picUrl"
-      fit="fit"></el-image>
+      fit="fill"></el-image>
        <span class="demonstration decoration artfont2">{{ mv[index].name }}</span>
        <p class="demonstration decoration artfont1" style="clear:both">{{ mv[index].artistName }}</p>
   </div>
@@ -35,7 +35,7 @@
       <el-image
       class="image channel-image"
       :src="channel[index].picUrl"
-      fit="fit"></el-image>
+      fit="fill"></el-image>
        <span class="demonstration decoration channel-name">{{ channel[index].name }}</span>
   </div>
 </div>

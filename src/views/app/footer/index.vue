@@ -11,12 +11,12 @@
       v-if="Object.keys(playing).length == 0"
       class="pic"
       :src='played.picUrl'
-      fit="fit"></el-image>
+      fit="fill"></el-image>
         <el-image
       v-else
       class="pic"
       :src='playing.picUrl'
-      fit="fit"></el-image>
+      fit="fill"></el-image>
       <div class="song-detail">
       <div class='player-name' v-if="Object.keys(playing).length == 0">{{played.name}}</div>
       <div class='player-name' v-else>{{playing.name}}</div>
@@ -24,7 +24,8 @@
       <div class='player-singer' v-else>{{playing.singer}}</div>
       </div>
       <div class='playing-tool'>
-      <div class="tool-btn"><el-button circle class='btn1' icon="el-icon-star-off"></el-button></div>
+      <div class="tool-btn" v-if="Object.keys(playing).length == 0" ><el-button v-if="played.like" @click="togger"  circle class='btn1' icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
+      <div class="tool-btn" v-else ><el-button v-if="playing.like" circle class='btn1'  @click="togger" icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
       <div class="tool-btn"><el-button circle class='btn1' icon="el-icon-arrow-left" @click="playBefore"></el-button></div>
       <div class="tool-btn" v-if="!status"><el-button circle class='btn1'  icon="el-icon-video-play" @click="play"></el-button></div>
       <div class="tool-btn" v-if="status"><el-button  circle class='btn1' icon="el-icon-video-pause" @click="pause"></el-button></div>
@@ -35,6 +36,7 @@
     </div>
 </template>
 <script>
+import { toggerlike } from '@/api/user.js'
 export default {
   name: 'FootPlayer',
   data () {
@@ -43,7 +45,9 @@ export default {
       status: 0,
       sliderTime: 0,
       audio: { maxTime: '' },
-      before: 0
+      before: 0,
+      afterIndex: 0,
+      beforeIndex: 0
     }
   },
   created () {
@@ -80,7 +84,7 @@ export default {
         // console.log(this.sliderTime)
       }
     },
-    // 加载完毕 改变图标
+    // 加载完毕 通过回调函数改变图标
     loaded (res) {
       this.status = 1
       this.audio.maxTime = parseInt(res.target.duration)
@@ -98,13 +102,41 @@ export default {
         this.sliderTime = parseInt(parseInt(this.$refs.audioB.currentTime) * 100 / this.audio.maxTime)
       }
     },
+    // 上一首
     playBefore () {
-      const beforeIndex = this.playing.index - 1
-      this.$store.commit('intoplaying', this.playingList[beforeIndex])
+      if (this.playing.index === 0) {
+        this.beforeIndex = this.playing.index
+      } else {
+        this.beforeIndex = this.playing.index - 1
+      }
+      this.$store.commit('intoplaying', this.playingList[this.beforeIndex])
     },
+    // 下一首
     playAfter () {
-      const afterIndex = this.playing.index + 1
-      this.$store.commit('intoplaying', this.playingList[afterIndex])
+      // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
+      if (this.playing.index === (this.playingList.length - 1)) {
+        this.afterIndex = this.playing.index
+      } else {
+        this.afterIndex = this.playing.index + 1
+      }
+      this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+    },
+    // 喜欢与取消喜欢
+    togger () {
+      if (Object.keys(this.playing).length === 0) {
+        toggerlike(this.played.id, !this.played.like).then(res => {
+          console.log(res)
+          this.played.like = !this.played.like
+        })
+      } else {
+        toggerlike(this.playing.id, !this.playing.like).then(res => {
+          console.log(res)
+          this.playing.like = !this.playing.like
+        })
+      }
+      // 如果当前页面是在当前歌单点了收藏 要重新获取一次歌单
+      // 这里的问题是要保存播放器进度 所以不能刷新
+      this.$store.commit('refresh', 0)
     }
   },
   mounted () {
@@ -112,8 +144,7 @@ export default {
   computed: {
     // 监听vuex中playing的变化 便于及时获取新要播放的歌曲
     playing: function () {
-      // console.log('123')
-      // 监听没办法计次。。。。
+      // 监听没办法计次
       return this.$store.state.playing
     },
     // 想要在刷新后用在vuex为空时 本地储存中最后一次数据输出到组件中
