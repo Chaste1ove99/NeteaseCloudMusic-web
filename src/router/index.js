@@ -18,6 +18,8 @@ import Rank from '../views/find/rank'
 import Selected from '../views/mv/selected'
 import Exclusive from '../views/mv/exclusive'
 import AllMV from '../views/mv/allMV'
+import Friend from '../views/friend'
+import user from '../views/user'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -82,6 +84,16 @@ const routes = [
         name: 'NewSong',
         component: newSong
       }]
+    },
+    {
+      path: '/app/friend',
+      name: 'Friend',
+      component: Friend
+    },
+    {
+      path: '/app/user',
+      name: user,
+      component: user
     },
     {
       path: '/app/mv',

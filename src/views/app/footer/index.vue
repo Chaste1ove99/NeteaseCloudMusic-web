@@ -1,11 +1,11 @@
 <template>
     <div class="player">
-      <el-slider v-model="sliderTime" @change="changeCurrentTime"></el-slider>
+      <el-slider v-model="sliderTime" @change="changeCurrentTime" class="slider"></el-slider>
       <div class="playing-container">
-      <audio v-if="Object.keys(playing).length == 0" :src="played.url" ref="audioA" autoplay=“true”
+      <audio v-if="Object.keys(playing).length == 0" :src="played.musicurl" ref="audioA" autoplay=“true”
       @loadedmetadata='loaded' @timeupdate='updateSlider'>
       </audio>
-      <audio v-else :src="playing.url" ref="audioB" autoplay=“true” @loadedmetadata='loaded' @timeupdate='updateSlider'></audio>
+      <audio v-else :src="playing.musicurl" ref="audioB" autoplay=“true” @loadedmetadata='loaded' @timeupdate='updateSlider'></audio>
       <!--这里判断空对象的方法特殊 详情csdn https://blog.csdn.net/qq_18671415/article/details/105014700-->
       <el-image
       v-if="Object.keys(playing).length == 0"
@@ -203,5 +203,8 @@ export default {
 .btn1 {
   border: none;
   size: middle;
+}
+.slider {
+  padding: 0;
 }
 </style>

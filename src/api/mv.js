@@ -27,3 +27,21 @@ export const getNTESMV = () => {
     }
   })
 }
+
+/**
+ * 获取全部MV
+ */
+
+export const getAllMV = (area, type, order, page) => {
+  return request({
+    method: 'GET',
+    url: '/mv/all',
+    params: {
+      area,
+      type,
+      order,
+      limit: 20,
+      offset: (page) * 20
+    }
+  })
+}

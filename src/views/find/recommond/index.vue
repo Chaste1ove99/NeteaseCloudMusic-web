@@ -61,6 +61,11 @@ export default {
   created () {
     getRecommondList().then(res => {
       this.list = res.data.result
+      for (let i = 0; i < this.list.length; i++) {
+        if (this.list[i].name.length > 25) {
+          this.list[i].name = this.list[i].name.slice(0, 26) + '...'
+        }
+      }
     })
     getOnlyByCloud().then(res => {
       this.content = res.data.result
@@ -92,6 +97,7 @@ export default {
   height: 180px;
   padding: 15px;
   padding-bottom: 40px;
+  margin-bottom: 30px;
 }
 .decoration {
   float: left;

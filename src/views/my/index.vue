@@ -12,9 +12,11 @@
               <el-image
               class="image"
              :src="item.coverImgUrl"
-            fit="cover"></el-image>
+            fit="fill"></el-image>
                     <div class="listname">{{item.name}}</div>
+                    <div class="clear"></div>
                     <div class="listtotal">{{item.trackCount}}首</div>
+                    <div class="clear"></div>
                     </div>
             </div>
     </div>
@@ -67,7 +69,7 @@ export default {
     height: 50px;
   }
   .user{
-    width: 600px;
+    width: 580px;
   }
   .header{
     text-align: center;
@@ -80,8 +82,8 @@ export default {
     padding: 10px;
   }
   .songlist {
-          margin-left: 45px;
-          margin-top: 15px;
+    margin-left: 45px;
+    margin-top: 15px;
   }
   .create-list {
       font-size: 20px;
@@ -93,8 +95,7 @@ export default {
   }
   .list {
     display: block;
-    padding-bottom: 10px;
-    margin-left: -20px;
+    padding-bottom: -20px;
   }
   .top {
     margin-bottom: 10px;
@@ -104,17 +105,21 @@ export default {
     height: 70px;
   }
   .listname {
-      display: inline-block;
-      position: relative;
-      top: -40px;
-      padding-left: 10px;
+    display: inline-block;
+    position: relative;
+    top: -40px;
+    padding-left: 10px;
   }
   .listtotal {
     position: relative;
     display: inline-block;
-    top: 30px;
-    left: 105px;
-    float: left;
     padding-top: 10px;
+    float: left;
+    top: -15px;
+    left: 82px;
+  }
+  .clear {
+    clear: both;
+    margin-top: -30px;
   }
 </style>

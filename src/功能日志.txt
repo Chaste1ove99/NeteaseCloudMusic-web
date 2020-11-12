@@ -1,8 +1,11 @@
+由于缺少动态的接口 动态功能目前无法开发
+
 目前已知BUG
 1.寻找页的图标和侧栏图标 激活时产生冲突
 2.我喜欢歌单中的最热评论显示冲突
 3.audio控件与播放器的图标问题
 4.接口限制 收藏音乐列表更新不及时
+5.在 safari和微软edge上 footer部分消失的问题(火狐 chrome均可用)
 
 当前未解决
 // 1.上一首是歌单第一首歌时 会造成播放停止(解决)
@@ -10,6 +13,11 @@
 3.播放器选择收藏后 歌单更新问题 (速度实在太慢) (重新渲染不需要时间 但接口更换数据太慢了)
 4.刷新后有播放键图标问题
 5.在播放器取消收藏后 刷新页面会出现播放器读取本地数据 收藏图标还在的问题
+
+酌情修改的功能
+1.音乐计时问题
+2.进度条的精度
+3.有关统一主题UI 设计
 
 getlikelist(this.userID).then(res => {
       console.log(res)
@@ -44,3 +52,7 @@ getlikelist(this.userID).then(res => {
         })
       }
     })
+
+     <div class="top1">{{item.top1.name}} - {{item.top1.ar[0].name}}</div>
+     <div class="top2">{{item.top2.name}} - {{item.top2.ar[0].name}}</div>
+     <div class="top3">{{item.top3.name}} - {{item.top3.ar[0].name}}</div>

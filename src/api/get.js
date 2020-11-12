@@ -109,3 +109,13 @@ export const searchAdvice = keywords => {
     }
   })
 }
+
+/**
+ * 获取排行榜
+ */
+export const getTopList = () => {
+  return request({
+    method: 'GET',
+    url: '/toplist'
+  })
+}

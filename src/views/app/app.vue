@@ -43,8 +43,9 @@ export default {
   bottom: 0;
   right: 0;
   left: 0;
-  height: 15%;
+  height: 16%;
   width: 100%;
+  padding: 0;
 }
 .el-ft {
   padding: 0;

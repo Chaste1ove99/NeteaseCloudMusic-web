@@ -18,11 +18,11 @@
         <i class="el-icon-headset"></i>
         <span slot="title">我的</span>
       </el-menu-item>
-      <el-menu-item index='/friend' class="item">
+      <el-menu-item index='/app/friend' class="item">
         <i class="el-icon-user-solid"></i>
         <span slot="title">朋友</span>
       </el-menu-item>
-      <el-menu-item index='/user' class="item">
+      <el-menu-item index='/app/user' class="item">
         <i class="el-icon-user"></i>
         <span slot="title">账号</span>
       </el-menu-item>
@@ -42,7 +42,7 @@ export default {
   margin-top: 80px;
 }
 .item {
-  margin-top: 30px;
+  margin-top: 20px;
 }
 .fm{
   margin-top: 100px;

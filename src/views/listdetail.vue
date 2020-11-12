@@ -126,7 +126,7 @@ export default {
       description: '',
       elIcon: 'el-icon-arrow-down',
       activeName: 'first',
-      song: { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' },
+      song: { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, musicurl: '' },
       tracks: [],
       localTime: 0,
       userID: 0,
@@ -150,7 +150,7 @@ export default {
       hotcomment: [],
       Sum: 0,
       currentPage: 1,
-      intoPlaying: { id: 0, url: '', name: '', singer: '', picUrl: '', like: '' }
+      intoPlaying: { id: 0, musicurl: '', name: '', singer: '', picUrl: '', like: '' }
     }
   },
   created () {
@@ -218,7 +218,7 @@ export default {
           this.song.id = this.listdetails.tracks[i].id
           this.song.index = i
           this.tracks.push(this.song)
-          this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' }
+          this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, musicurl: '' }
         }
       })
     } else {
@@ -319,7 +319,7 @@ export default {
       } else {
         for (let i = 0; i < this.tracks.length; i++) {
           getSongUrl(this.tracks[i].id).then(res => {
-            this.tracks[i].url = res.data.data[0].url
+            this.tracks[i].musicurl = res.data.data[0].url
           })
         }
         getSongUrl(item.id).then(res => {
@@ -328,7 +328,7 @@ export default {
           this.intoPlaying.singer = item.singer
           this.intoPlaying.name = item.name
           this.intoPlaying.id = item.id
-          this.intoPlaying.url = res.data.data[0].url
+          this.intoPlaying.musicurl = res.data.data[0].url
           this.intoPlaying.picUrl = item.picUrl
           this.intoPlaying.index = item.index
           this.intoPlaying.like = item.like
@@ -422,7 +422,7 @@ export default {
               this.song.id = this.listdetails.tracks[i].id
               this.song.index = i
               this.tracks.push(this.song)
-              this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, url: '' }
+              this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, musicurl: '' }
             }
           })
         } else {

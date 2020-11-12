@@ -17,7 +17,7 @@
         <div class="hot-mv">
           <div class="top-bar">推荐MV</div>
           <div class="demo-image">
-  <div class="block list3" v-for="(item, index) in mv" :key="index">
+  <div class="list3" v-for="(item, index) in mv" :key="index">
       <el-image
       class="image"
       :src="mv[index].picUrl"

@@ -61,3 +61,55 @@ export const toggerlike = (id, like) => {
     }
   })
 }
+
+/**
+ * 获取账号信息
+ */
+export const getAccount = () => {
+  return request({
+    method: 'GET',
+    url: '/user/account'
+  })
+}
+
+/**
+ * 获取用户关注
+ */
+export const getFollows = id => {
+  return request({
+    method: 'GET',
+    url: '/user/follows',
+    params: {
+      uid: id,
+      limit: 30
+    }
+  })
+}
+
+/**
+ * 获取用户粉丝
+ */
+export const getFolloweds = id => {
+  return request({
+    method: 'GET',
+    url: '/user/followeds',
+    params: {
+      uid: id,
+      limit: 30
+    }
+  })
+}
+
+/**
+ * 获取用户动态
+ */
+export const getEvent = id => {
+  return request({
+    method: 'GET',
+    url: '/user/event',
+    params: {
+      uid: id,
+      limit: 30
+    }
+  })
+}

@@ -89,7 +89,8 @@ export default {
   height: 100px
 }
 .item {
-  margin-left: 50px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 .menu {
   padding-left: 80px;
