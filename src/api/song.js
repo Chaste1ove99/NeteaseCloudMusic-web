@@ -25,3 +25,43 @@ export const getSongUrl = id => {
     }
   })
 }
+
+/**
+ * 新碟上架
+ */
+export const getTopAlbum = page => {
+  return request({
+    method: 'GET',
+    url: '/top/album',
+    params: {
+      limit: 20,
+      offset: (page) * 20
+    }
+  })
+}
+
+/**
+ * 获取全部新碟
+ */
+export const getNewAlbum = () => {
+  return request({
+    method: 'GET',
+    url: '/album/new',
+    params: {
+      limit: 100
+    }
+  })
+}
+
+/**
+ * 新歌速递
+ */
+export const getTopSong = type => {
+  return request({
+    method: 'GET',
+    url: '/top/song',
+    params: {
+      type
+    }
+  })
+}
