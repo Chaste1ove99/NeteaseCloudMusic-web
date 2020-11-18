@@ -38,8 +38,8 @@
       class="image"
       :src="mv[index].cover"
       fit="fill"></el-image>
-       <span class="demonstration decoration artfont2">{{ mv[index].name }}</span>
-       <p class="demonstration decoration artfont1" style="clear:both">{{ mv[index].artistName }}</p>
+       <div class="decoration artfont2">{{ mv[index].name }}</div>
+       <div class="decoration artfont1" style="clear:both">{{ mv[index].artistName }}</div>
   </div>
           </div>
           </div>
@@ -75,11 +75,6 @@ export default {
       getAllMV(this.area, this.type, this.order, this.pageNum).then(res => {
         // console.log(res)
         this.mv = res.data.data
-        for (let i = 0; i < this.mv.length; i++) {
-          if (this.mv[i].name.length > 20) {
-            this.mv[i].name = this.mv[i].name.slice(0, 19) + '...'
-          }
-        }
       })
     },
     changeArea (newArea) {
@@ -87,11 +82,6 @@ export default {
         // console.log(res)
         this.Sum = res.data.count
         this.mv = res.data.data
-        for (let i = 0; i < this.mv.length; i++) {
-          if (this.mv[i].name.length > 20) {
-            this.mv[i].name = this.mv[i].name.slice(0, 19) + '...'
-          }
-        }
       })
     },
     changeType (newType) {
@@ -99,11 +89,6 @@ export default {
         // console.log(res)
         this.Sum = res.data.count
         this.mv = res.data.data
-        for (let i = 0; i < this.mv.length; i++) {
-          if (this.mv[i].name.length > 20) {
-            this.mv[i].name = this.mv[i].name.slice(0, 19) + '...'
-          }
-        }
       })
     },
     changeOrder (newOrder) {
@@ -111,11 +96,6 @@ export default {
         // console.log(res)
         this.Sum = res.data.count
         this.mv = res.data.data
-        for (let i = 0; i < this.mv.length; i++) {
-          if (this.mv[i].name.length > 20) {
-            this.mv[i].name = this.mv[i].name.slice(0, 19) + '...'
-          }
-        }
       })
     }
   },
@@ -124,11 +104,6 @@ export default {
       // console.log(res)
       this.mv = res.data.data
       this.Sum = res.data.count
-      for (let i = 0; i < this.mv.length; i++) {
-        if (this.mv[i].name.length > 20) {
-          this.mv[i].name = this.mv[i].name.slice(0, 19) + '...'
-        }
-      }
     })
   }
 }
@@ -175,7 +150,6 @@ export default {
   font-size: 12px;
 }
 .artfont2 {
-  display: inline;
   font-size: 12px;
 }
 .pagination {
@@ -184,5 +158,11 @@ export default {
   justify-content: center;
   align-items: center;
   margin-right: 150px;
+}
+.decoration {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 240px;
 }
 </style>

@@ -51,9 +51,9 @@
     <div v-for="(item, index) in tracks" :key='index' class="song-border" @dblclick="playSong(item)">
       <span class="head-bar">{{item.head}}</span>
       <span class="dwl-bar" @click="togger(item.id,item.like)"><i v-if="item.like" class="el-icon-star-on"/><i v-else class="el-icon-star-off"></i></span>
-      <span class="song-bar">{{item.name}}</span>
-    <span class="singer-bar">{{item.singer}}</span>
-    <span class="alb-bar">{{item.albums}}</span></div>
+      <div class="song-bar">{{item.name}}</div>
+    <div class="singer-bar">{{item.singer}}</div>
+    <div class="alb-bar">{{item.albums}}</div></div>
   </div>
 </div>
 <div class="comment-tab none" ref="comment-desk">
@@ -102,7 +102,7 @@
       fit="fill"></el-image>
       <div class="suber-detail">
         <div class="suber-name">{{item.nickname}}</div>
-        <div class="suber-siganature">{{item.signature.slice(0,15)}}<span v-if="item.signature">...</span></div>
+        <div class="suber-siganature">{{item.signature}}</div>
         </div>
     </div>
   </div>
@@ -198,16 +198,8 @@ export default {
         // 转化作者时间戳
         this.getLocalCreateTime(this.listdetails.createTime)
         for (let i = 0; i < this.listdetails.tracks.length; i++) {
-          if (this.listdetails.tracks[i].name.length < 22) {
-            this.song.name = this.listdetails.tracks[i].name
-          } else {
-            this.song.name = this.listdetails.tracks[i].name.slice(0, 25) + '...'
-          }
-          if (this.listdetails.tracks[i].al.name.length < 15) {
-            this.song.albums = this.listdetails.tracks[i].al.name
-          } else {
-            this.song.albums = this.listdetails.tracks[i].al.name.slice(0, 14) + '...'
-          }
+          this.song.name = this.listdetails.tracks[i].name
+          this.song.albums = this.listdetails.tracks[i].al.name
           if (i < 9) {
             this.song.head = '0' + (i + 1)
           } else {
@@ -402,16 +394,8 @@ export default {
             // 转化作者时间戳
             this.getLocalCreateTime(this.listdetails.createTime)
             for (let i = 0; i < this.listdetails.tracks.length; i++) {
-              if (this.listdetails.tracks[i].name.length < 22) {
-                this.song.name = this.listdetails.tracks[i].name
-              } else {
-                this.song.name = this.listdetails.tracks[i].name.slice(0, 25) + '...'
-              }
-              if (this.listdetails.tracks[i].al.name.length < 15) {
-                this.song.albums = this.listdetails.tracks[i].al.name
-              } else {
-                this.song.albums = this.listdetails.tracks[i].al.name.slice(0, 14) + '...'
-              }
+              this.song.name = this.listdetails.tracks[i].name
+              this.song.albums = this.listdetails.tracks[i].al.name
               if (i < 9) {
                 this.song.head = '0' + (i + 1)
               } else {
@@ -533,16 +517,29 @@ export default {
   }
   .song-bar {
     display: inline-block;
-    width: 300px;
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
   }
   .alb-bar {
     display: inline-block;
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
   }
   .singer-bar {
     display: inline-block;
     width: 200px;
     position: relative;
     top: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
   }
   .head-bar {
     display: inline-block;
@@ -596,6 +593,10 @@ export default {
   .suber-siganature {
     font-size: 12px;
     color: #b2adab;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 200px;
   }
   .hot-comt {
     margin-top: 60px;

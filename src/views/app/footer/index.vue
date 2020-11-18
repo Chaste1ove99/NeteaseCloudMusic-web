@@ -6,7 +6,7 @@
       @loadedmetadata='loaded' @timeupdate='updateSlider'>
       </audio>
       <audio v-else :src="playing.musicurl" ref="audioB" autoplay=“true” @loadedmetadata='loaded' @timeupdate='updateSlider'></audio>
-      <!--这里判断空对象的方法特殊 详情csdn https://blog.csdn.net/qq_18671415/article/details/105014700-->
+      <!--这里判断空对象的方法 详情csdn https://blog.csdn.net/qq_18671415/article/details/105014700-->
       <el-image
       v-if="Object.keys(playing).length == 0"
       class="pic"
@@ -27,10 +27,10 @@
       <div class="tool-btn" v-if="Object.keys(playing).length == 0" ><el-button v-if="played.like" @click="togger"  circle class='btn1' icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
       <div class="tool-btn" v-else ><el-button v-if="playing.like" circle class='btn1'  @click="togger" icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
       <div class="tool-btn"><el-button circle class='btn1' icon="el-icon-arrow-left" @click="playBefore"></el-button></div>
-      <div class="tool-btn" v-if="!status"><el-button circle class='btn1'  icon="el-icon-video-play" @click="play"></el-button></div>
-      <div class="tool-btn" v-if="status"><el-button  circle class='btn1' icon="el-icon-video-pause" @click="pause"></el-button></div>
-      <div class="tool-btn"><el-button circle class='btn1' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
-      <div class="tool-btn"><el-button circle class='btn1' icon='el-icon-top'></el-button></div>
+      <div class="tool-btn" v-if="!status"><el-button circle class='btn2'  icon="el-icon-video-play" @click="play"></el-button></div>
+      <div class="tool-btn" v-if="status"><el-button  circle class='btn3' icon="el-icon-video-pause" @click="pause"></el-button></div>
+      <div class="tool-btn"><el-button circle class='btn4' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
+      <div class="tool-btn"><el-button circle class='btn5' icon='el-icon-top'></el-button></div>
       </div>
       </div>
     </div>
@@ -163,6 +163,7 @@ export default {
 .player {
   background: #fff;
   margin-left: 10px;
+  width: 1100px;
 }
 .pic {
   width: 100px;
@@ -203,6 +204,27 @@ export default {
 .btn1 {
   border: none;
   size: middle;
+  left: 30%;
+}
+.btn2 {
+  border: none;
+  size: middle;
+  left: 32%;
+}
+.btn3 {
+  border: none;
+  size: middle;
+  left: 34%;
+}
+.btn4 {
+  border: none;
+  size: middle;
+  left: 36%;
+}
+.btn5 {
+  border: none;
+  size: middle;
+  left: 38%;
 }
 .slider {
   padding: 0;

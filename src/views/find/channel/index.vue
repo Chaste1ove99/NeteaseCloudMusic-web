@@ -7,7 +7,6 @@
       class="paylist-pic"
       :src="item.picUrl"
       fit="scale-down"></el-image>
-      <div class="decoration">{{item.name}}</div>
     </el-carousel-item>
        </el-carousel>
       </div>
@@ -27,7 +26,7 @@
            class="hotlist-icon"
       style="width: 200px; height: 200px"
       :src="item.picUrl"
-      fit="fill"></el-image><div>{{item.name}}</div>
+      fit="fill"></el-image><div class="item-text">{{item.name}}</div>
         </div>
       </div>
       <div>
@@ -57,11 +56,6 @@ export default {
   created () {
     gethotChannel(0).then(res => {
       this.djRadios = res.data.djRadios
-      for (let i = 0; i < this.djRadios.length; i++) {
-        if (this.djRadios[i].name.length > 10) {
-          this.djRadios[i].name = this.djRadios[i].name.slice(0, 10) + '...'
-        }
-      }
     })
     getcatelist().then(res => {
       // console.log(res)
@@ -78,11 +72,6 @@ export default {
       gethotChannel(newPage).then(res => {
         console.log(res)
         this.djRadios = res.data.djRadios
-        for (let i = 0; i < this.djRadios.length; i++) {
-          if (this.djRadios[i].name.length > 10) {
-            this.djRadios[i].name = this.djRadios[i].name.slice(0, 10) + '...'
-          }
-        }
       })
     }
   }
@@ -142,5 +131,11 @@ export default {
   .page-change {
     display: block;
     text-align: center;
+  }
+  .item-text {
+    width: 200px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 </style>

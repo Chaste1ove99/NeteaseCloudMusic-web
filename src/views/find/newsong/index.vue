@@ -9,15 +9,30 @@
           <div class="main">
           <div class="new-music" ref="new-music">
             <div>
-              <el-menu :default-active="activeIndex" class="el-menu-demo song-bar" mode="horizontal" @select="handleSelect">
-  <el-menu-item index="1" class="item1">全部</el-menu-item>
-  <el-menu-item index="2" class="item2">华语</el-menu-item>
-  <el-menu-item index="3" class="item3">欧美</el-menu-item>
-  <el-menu-item index="4" class="item4">韩国</el-menu-item>
-  <el-menu-item index="5" class="item5">日本</el-menu-item>
+              <el-menu :default-active="activeIndex" class="el-menu-demo song-bar" mode="horizontal">
+  <el-menu-item index="1" class="item1" @click="getSong(0)">全部</el-menu-item>
+  <el-menu-item index="2" class="item2" @click="getSong(7)">华语</el-menu-item>
+  <el-menu-item index="3" class="item3" @click="getSong(96)">欧美</el-menu-item>
+  <el-menu-item index="4" class="item4" @click="getSong(16)">韩国</el-menu-item>
+  <el-menu-item index="5" class="item5" @click="getSong(8)">日本</el-menu-item>
   </el-menu>
             </div>
-            <div>123</div>
+            <div>
+              <div class="top-nav">
+                <el-button icon="el-icon-caret-right" class="play-btn">播放全部</el-button>
+              </div>
+              <div class="top100-block">
+                <div v-for="(item, index) in top100" :key="index" class="single-block">
+                  <div class="num">{{index + 1}}</div>
+                  <div class="song-title">
+                  <div class="song-name">{{item.information}}</div>
+                  <div class="song-detail">
+                    {{item.detail}}
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="new-album no-view" ref="new-album">
             <div class="al-bar">本周新碟</div>
@@ -41,7 +56,8 @@ export default {
   name: 'newSongIndex',
   data () {
     return {
-      weekData: []
+      weekData: [],
+      top100: []
     }
   },
   methods: {
@@ -56,24 +72,59 @@ export default {
       this.$refs['new-music'].classList.remove('view')
       this.$refs['new-album'].classList.remove('no-view')
       this.$refs['new-music'].classList.add('view')
+    },
+    getSong (num) {
+      getTopSong(num).then(res => {
+        this.top100 = res.data.data
+        for (let i = 0; i < this.top100.length; i++) {
+          this.top100[i].artistCount = ''
+          this.top100[i].information = ''
+          if (this.top100[i].alias.length > 0) {
+            this.top100[i].information = this.top100[i].name + '(' + this.top100[i].alias[0] + ')'
+          } else {
+            this.top100[i].information = this.top100[i].name
+          }
+          for (let j = 0; j < this.top100[i].artists.length; j++) {
+            if (j > 0) {
+              this.top100[i].artists[j].name = '/' + this.top100[i].artists[j].name
+            }
+            this.top100[i].artistCount += this.top100[i].artists[j].name
+            this.top100[i].detail = this.top100[i].artistCount + ' - ' + this.top100[i].album.name
+          }
+        }
+      })
     }
   },
   created () {
     getTopAlbum(0).then(res => {
       this.weekData = res.data.weekData
-      for (let i = 0; i < this.weekData.length; i++) {
-        if (this.weekData[i].name.length > 22) {
-          this.weekData[i].name = this.weekData[i].name.slice(0, 22) + '...'
-        }
-      }
     })
     getTopSong(0).then(res => {
-      console.log(res)
+      this.top100 = res.data.data
+      for (let i = 0; i < this.top100.length; i++) {
+        this.top100[i].artistCount = ''
+        this.top100[i].information = ''
+        if (this.top100[i].alias.length > 0) {
+          this.top100[i].information = this.top100[i].name + '(' + this.top100[i].alias[0] + ')'
+        } else {
+          this.top100[i].information = this.top100[i].name
+        }
+        for (let j = 0; j < this.top100[i].artists.length; j++) {
+          if (j > 0) {
+            this.top100[i].artists[j].name = '/' + this.top100[i].artists[j].name
+          }
+          this.top100[i].artistCount += this.top100[i].artists[j].name
+          this.top100[i].detail = this.top100[i].artistCount + ' - ' + this.top100[i].album.name
+        }
+      }
     })
   }
 }
 </script>
 <style scoped>
+.top-nav {
+  width: 1002px;
+}
 .newSong-container{
   width: 1100px;
   margin-left: 10px;
@@ -82,7 +133,6 @@ export default {
 .top-bar {
   display: block;
   text-align: center;
-  margin-top: -20px;
 }
 .no-view {
   display: none;
@@ -113,6 +163,7 @@ export default {
   font-size: 14px;
   color: #cccccc;
 }
+/**这里设置了固定位置*/
 .item1 {
   left: 34%;
   padding-bottom: -3px;
@@ -132,5 +183,46 @@ export default {
 .item5{
   left: 36%;
   padding-bottom: -3px;
+}
+.play-btn {
+  border: none;
+}
+.top-nav {
+  margin-top: 20px;
+  border: 1px solid #F0EDEC;
+}
+.song-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.song-alias {
+  color: #676463;
+}
+.song-detail {
+  color: #676463;
+  font-size: 13px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.single-block {
+  display: inline-block;
+  width: 500px;
+  border: 1px solid #F0EDEC;
+  border-top: none;
+}
+.num {
+  display: inline-block;
+  position: relative;
+  top: -10px;
+  width: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+.song-title {
+  display: inline-block;
+  width: 450px;
 }
 </style>

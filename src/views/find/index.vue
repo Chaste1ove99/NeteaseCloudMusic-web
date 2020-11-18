@@ -1,13 +1,14 @@
 <template>
     <div class="FindPage">
-        <div class="header">
+          <div class="option">
             <el-menu :default-active.sync="$route.path" class="el-menu-demo menu" mode="horizontal" router>
-  <el-menu-item index="1" class="item" >推荐</el-menu-item>
-  <el-menu-item index="2" class="item">歌单</el-menu-item>
-  <el-menu-item index="3" class="item">电台</el-menu-item>
-  <el-menu-item index="4" class="item">排行榜</el-menu-item>
-  <el-menu-item index="5" class="item">新歌</el-menu-item>
-  <div class="search-bar">
+              <!--缩放时存在bug 会异常换行--> <!--通过设置页面宽度解决-->
+  <el-menu-item index="1" class="item1">推荐</el-menu-item>
+  <el-menu-item index="2" class="item2">歌单</el-menu-item>
+  <el-menu-item index="3" class="item3">电台</el-menu-item>
+  <el-menu-item index="4" class="item4">排行榜</el-menu-item>
+  <el-menu-item index="5" class="item5">新歌</el-menu-item>
+   <div class="search-bar">
   <el-autocomplete
   v-model="search"
   :fetch-suggestions="querySearchAsync"
@@ -73,34 +74,33 @@ export default {
         }
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
-          console.log(this.suggest)
           callback(this.suggest)
         }, 3000 * Math.random())
       })
-    },
-    handleSelect (item) {
-      console.log(item)
     }
   }
 }
 </script>
 <style scoped>
-.header {
-  height: 100px
+.item1 {
+  left: 20%;
 }
-.item {
-  padding-left: 50px;
-  padding-right: 50px;
+.item2 {
+  left: 24%;
 }
-.menu {
-  padding-left: 80px;
+.item3 {
+  left: 28%;
+}
+.item4 {
+  left: 32%;
+}
+.item5 {
+  left: 36%;
 }
 .search-bar {
+  left: 80%;
   float: right;
   width: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin: 10px 25px 0 0;
 }
 .icon {
@@ -108,5 +108,14 @@ export default {
 }
 .search {
     border-radius: 5px;
+}
+.main {
+  margin-top: 10px;
+}
+.FindPage {
+  width: 1150px;
+}
+.option {
+  height: 100px;
 }
 </style>

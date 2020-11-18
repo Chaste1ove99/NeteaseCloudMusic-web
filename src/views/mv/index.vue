@@ -108,4 +108,7 @@ export default {
 .search {
     border-radius: 5px;
 }
+.mvPage {
+  width: 1150px;
+}
 </style>

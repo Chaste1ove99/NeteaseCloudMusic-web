@@ -28,7 +28,6 @@ export default {
 </script>
 <style scoped>
 .main {
-  position: relative;
   margin-left: 100px;
 }
 .container {
