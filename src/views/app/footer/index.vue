@@ -23,15 +23,17 @@
       <div class='player-singer' v-if="Object.keys(playing).length == 0">{{played.singer}}</div>
       <div class='player-singer' v-else>{{playing.singer}}</div>
       </div>
+      <div class="blank-box1"></div>
       <div class='playing-tool'>
-      <div class="tool-btn" v-if="Object.keys(playing).length == 0" ><el-button v-if="played.like" @click="togger"  circle class='btn1' icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
-      <div class="tool-btn" v-else ><el-button v-if="playing.like" circle class='btn1'  @click="togger" icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
-      <div class="tool-btn"><el-button circle class='btn1' icon="el-icon-arrow-left" @click="playBefore"></el-button></div>
-      <div class="tool-btn" v-if="!status"><el-button circle class='btn2'  icon="el-icon-video-play" @click="play"></el-button></div>
-      <div class="tool-btn" v-if="status"><el-button  circle class='btn3' icon="el-icon-video-pause" @click="pause"></el-button></div>
-      <div class="tool-btn"><el-button circle class='btn4' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
-      <div class="tool-btn"><el-button circle class='btn5' icon='el-icon-top'></el-button></div>
+      <div class="tool-btn" v-if="Object.keys(playing).length == 0" ><el-button v-if="played.like" @click="togger"  circle class='btn' icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
+      <div class="tool-btn" v-else ><el-button v-if="playing.like" circle class='btn'  @click="togger" icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
+      <div class="tool-btn"><el-button circle class='btn' icon="el-icon-arrow-left" @click="playBefore"></el-button></div>
+      <div class="tool-btn" v-if="!status"><el-button circle class='btn'  icon="el-icon-video-play" @click="play"></el-button></div>
+      <div class="tool-btn" v-if="status"><el-button  circle class='btn' icon="el-icon-video-pause" @click="pause"></el-button></div>
+      <div class="tool-btn"><el-button circle class='btn' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
+      <div class="tool-btn"><el-button circle class='btn' icon='el-icon-top'></el-button></div>
       </div>
+      <div class="blank-box2"></div>
       </div>
     </div>
 </template>
@@ -160,73 +162,52 @@ export default {
 }
 </script>
 <style scoped>
+.blank-box1{
+  flex: 4;
+}
+.blank-box2{
+  flex: 6;
+}
 .player {
   background: #fff;
   margin-left: 10px;
-  width: 1100px;
 }
 .pic {
-  width: 100px;
-  height: 100px;
+  flex: 1;
+  width: 100%;
+  height: 100%;
   border-radius: 20px;
-  margin-top: 10px;
 }
 .playing-container {
-  display: inline-block;
-  margin-top: -23px;
+  display: flex;
 }
 .song-detail {
-  display: inline-block;
-  top: -30px;
-  position: relative;
-  margin-top: 10px;
-  margin-left: 15px;
-  width: 300px;
+  flex: 1;
+  padding-left: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 }
 .player-name {
-  padding-bottom: 10px;
+  padding-bottom: 5px;
+  white-space: nowrap;
 }
 .player-singer {
   font-size: 14px;
   color: #b2adab;
 }
 .playing-tool {
-  display: inline-block;
-  position: relative;
-  margin-top: 10px;
-  margin-left: 140px;
-  top: -45px;
+  flex: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .tool-btn {
   display: inline;
   margin-right: 10px;
+  flex: 1;
 }
-.btn1 {
+.btn{
   border: none;
-  size: middle;
-  left: 30%;
-}
-.btn2 {
-  border: none;
-  size: middle;
-  left: 32%;
-}
-.btn3 {
-  border: none;
-  size: middle;
-  left: 34%;
-}
-.btn4 {
-  border: none;
-  size: middle;
-  left: 36%;
-}
-.btn5 {
-  border: none;
-  size: middle;
-  left: 38%;
-}
-.slider {
-  padding: 0;
 }
 </style>

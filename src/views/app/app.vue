@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
   <el-aside class="aside" width='auto' height='100%'>
-      <layout class="layout"></layout>
+      <layout></layout>
   </el-aside>
   <el-container class="main">
     <el-main>
@@ -42,9 +42,10 @@ export default {
   bottom: 0;
   right: 0;
   left: 0;
-  height: 16%;
+  height: 20%;
   width: 100%;
   padding: 0;
+  background: #fff;
 }
 .el-ft {
   padding: 0;
