@@ -1,42 +1,42 @@
 <template>
   <div class="recommond-page">
       <div class='header'>推荐歌单</div>
-      <div class="demo-image">
-  <div class="block list1" v-for="(item, index) in list" :key="index" @click="intolist(item)">
+      <div class="list-block">
+  <div class="songlist" v-for="(item, index) in list" :key="index" @click="intolist(item)">
       <el-image
       class="image"
       :src="list[index].picUrl"
       fit="fill"></el-image>
-      <span class="demonstration decoration">{{ list[index].name }}</span>
+      <div class="list-name decoration">{{ list[index].name }}</div>
   </div>
 </div>
 <div class='content'>独家放送</div>
-<div class="demo-image">
-  <div class="block list2" v-for="(item, index) in content" :key="index">
+<div class="list-block">
+  <div class="content-list" v-for="(item, index) in content" :key="index">
       <el-image
       class="image"
       :src="content[index].picUrl"
       fit="fill"></el-image>
-       <span class="demonstration decoration content-name">{{ content[index].name }}</span>
+       <div class="decoration content-name">{{ content[index].name }}</div>
   </div>
   <div class='content'>推荐MV</div>
-<div class="demo-image">
-  <div class="block list3" v-for="(item, index) in mv" :key="index">
+<div class="list-block">
+  <div class="mv-list" v-for="(item, index) in mv" :key="index">
       <el-image
       class="image"
       :src="mv[index].picUrl"
       fit="fill"></el-image>
-       <span class="demonstration decoration artfont2">{{ mv[index].name }}</span>
-       <p class="demonstration decoration artfont1" style="clear:both">{{ mv[index].artistName }}</p>
+       <span class="mv-name artfont2">{{ mv[index].name }}</span>
+       <div class="decoration artfont1">{{ mv[index].artistName }}</div>
   </div>
   <div class='content'>推荐电台</div>
-<div class="demo-image  bottom">
-  <div class="block list4" v-for="(item, index) in channel" :key="index">
+<div class="list-block">
+  <div class="channel-list" v-for="(item, index) in channel" :key="index">
       <el-image
       class="image channel-image"
       :src="channel[index].picUrl"
       fit="fill"></el-image>
-       <span class="demonstration decoration channel-name">{{ channel[index].name }}</span>
+       <div class="decoration channel-name">{{ channel[index].name }}</div>
   </div>
 </div>
 </div>
@@ -84,26 +84,32 @@ export default {
 <style scoped>
 .recommond-page {
   margin-left: 10px;
-  width: 1300px;
+  padding-bottom: 15%;
 }
-.list1 {
+ .list-block{
+   padding-top: 20px;
+ }
+.mv-name{
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.songlist{
+  width: 15%;
   display: inline-block;
-  width: 180px;
-  height: 180px;
-  padding: 15px;
-  padding-bottom: 40px;
-  margin-bottom: 30px;
+  padding: 10px;
+  vertical-align: top;
 }
 .decoration {
-  float: left;
-  text-overflow: ellipsis;
-  word-break: break-all;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 .header {
   padding-left:20px;
   margin-left:3px;
 }
-.list2 {
+.content-list {
   display: inline-block;
   width: 220px;
   height: 80px;
@@ -115,12 +121,13 @@ export default {
   padding-left: 20px;
   margin-left:3px;
 }
-.list3 {
+.mv-list {
   display: inline-block;
   width: 200px;
   height: 150px;
   padding: 15px;
   padding-bottom: 10px;
+  overflow: hidden;
 }
 .artfont1 {
   font-family: 'DFKai-SB';
@@ -131,22 +138,21 @@ export default {
   display: inline;
   font-size: 12px;
 }
-.list4 {
+.channel-list {
   display: inline-block;
-  width: 500px;
+  width: 40%;
 }
 .channel-image {
-  width:120px;
-  height: 120px;
-  float: left;
+  display: inline-block;
+  width: 30%;
   margin: 20px 10px 20px 20px;
+  vertical-align: top;
 }
 .channel-name {
+  display: inline-block;
   margin-top: 60px;
-  width: 300px;
-}
-.bottom {
-  margin-bottom: 20%;
+  width: 60%;
+  vertical-align: middle;
 }
 .content-name {
   font-size: 14px;
