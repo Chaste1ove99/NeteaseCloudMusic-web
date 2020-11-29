@@ -28,7 +28,7 @@
       <div class="tool-btn" v-if="Object.keys(playing).length == 0" ><el-button v-if="played.like" @click="togger"  circle class='btn' icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
       <div class="tool-btn" v-else ><el-button v-if="playing.like" circle class='btn'  @click="togger" icon="el-icon-star-on"/><el-button v-else @click="togger" circle class='btn1' icon="el-icon-star-off"/></div>
       <div class="tool-btn"><el-button circle class='btn' icon="el-icon-arrow-left" @click="playBefore"></el-button></div>
-      <div class="tool-btn" v-if="!status"><el-button circle class='btn'  icon="el-icon-video-play" @click="play"></el-button></div>
+      <div class="tool-btn" v-if="!status"><el-button circle class='btn'  icon="el-icon-video-play" @click="play" :disabled.sync='diasbled'></el-button></div>
       <div class="tool-btn" v-if="status"><el-button  circle class='btn' icon="el-icon-video-pause" @click="pause"></el-button></div>
       <div class="tool-btn"><el-button circle class='btn' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
       <div class="tool-btn"><el-button circle class='btn' icon='el-icon-top'></el-button></div>
@@ -38,6 +38,7 @@
     </div>
 </template>
 <script>
+import { getSongUrl } from '@/api/song.js'
 import { toggerlike } from '@/api/user.js'
 export default {
   name: 'FootPlayer',
@@ -49,7 +50,9 @@ export default {
       audio: { maxTime: '' },
       before: 0,
       afterIndex: 0,
-      beforeIndex: 0
+      beforeIndex: 0,
+      singerName: '',
+      diasbled: false
     }
   },
   created () {
@@ -158,6 +161,33 @@ export default {
     playingList: function () {
       return this.$store.state.playingList
     }
+  },
+  watch: {
+    // 监听playing 以获取url等属性
+    playing (e) {
+      getSongUrl(e.id).then(res1 => {
+        const url = res1.data.data[0].url
+        if (url == null) {
+          // 未付费时会终止音乐
+          this.$message('您没有权限听这首歌哦,请在网易云官方客户端购买')
+          this.diasbled = true
+          this.status = 0
+          this.sliderTime = 0
+          this.pause()
+        } else {
+          this.diasbled = false
+        }
+        this.$set(e, 'musicurl', url)
+        this.$set(e, 'picUrl', e.al.picUrl)
+        this.singerName = e.ar[0].name
+        for (let i = 1; i < e.ar.length; i++) {
+          this.singerName += '/'
+          this.singerName += e.ar[i].name
+        }
+        this.$set(e, 'singer', this.singerName)
+        return e
+      })
+    }
   }
 }
 </script>
@@ -173,14 +203,14 @@ export default {
   margin-left: 10px;
 }
 .pic {
-  flex: 1;
+  width: 100px;
   border-radius: 20px;
 }
 .playing-container {
   display: flex;
 }
 .song-detail {
-  flex: 1;
+  width: 300px;
   padding-left: 10px;
   display: flex;
   justify-content: center;
@@ -189,21 +219,28 @@ export default {
 .player-name {
   padding-bottom: 5px;
   white-space: nowrap;
+  width: 300px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .player-singer {
   font-size: 14px;
   color: #b2adab;
+  width: 300px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .playing-tool {
-  flex: 3;
+  width: 600px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  padding-right: 300px;
 }
 .tool-btn {
-  display: inline;
+  display: inline-block;
   margin-right: 10px;
-  flex: 1;
+  width: 50px;
 }
 .btn{
   border: none;

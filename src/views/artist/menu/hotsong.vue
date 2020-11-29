@@ -1,7 +1,7 @@
 <template>
      <div class="hotsong-wrap">
          <el-button round class="collect-bar" icon="el-icon-folder-add">收藏全部</el-button>
-        <div v-for="(item, index) in hotsong" :key="index" class="song-wrap">
+        <div v-for="(item, index) in hotsong" :key="index" class="song-wrap" @dblclick="playmusic(index)">
           <div class='num'>{{index+1}}</div>
           <div class="song-name">{{item.name}}</div>
           <div class="song-album">{{item.al.name}}</div>
@@ -18,9 +18,18 @@ export default {
       hotsong: []
     }
   },
+  methods: {
+    playmusic (index) {
+      this.$store.commit('intoplaying', this.hotsong[index])
+      this.$store.commit('publishList', this.hotsong)
+    }
+  },
   created () {
     getArtistSong(this.$route.query.id).then(res => {
       this.hotsong = res.data.hotSongs
+      for (let i = 0; i < this.hotsong.length; i++) {
+        this.hotsong[i].index = i
+      }
     })
   }
 }
