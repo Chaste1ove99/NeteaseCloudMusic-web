@@ -73,11 +73,8 @@ export default {
         this.timeout = setTimeout(() => {
           console.log(this.suggest)
           callback(this.suggest)
-        }, 3000 * Math.random())
+        }, 1000 * Math.random())
       })
-    },
-    handleSelect (item) {
-      console.log(item)
     }
   }
 }

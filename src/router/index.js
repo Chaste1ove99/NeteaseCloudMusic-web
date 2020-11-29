@@ -20,6 +20,11 @@ import Exclusive from '../views/mv/exclusive'
 import AllMV from '../views/mv/allMV'
 import Friend from '../views/friend'
 import user from '../views/user'
+import Artist from '../views/artist/artist.vue'
+import hotsong from '../views/artist/menu/hotsong.vue'
+import artistAlbum from '../views/artist/menu/album.vue'
+import artistMv from '../views/artist/menu/mv.vue'
+import artistDesc from '../views/artist/menu/desc.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -56,8 +61,8 @@ const routes = [
     name: 'APP',
     component: APP,
     children: [{
-      path: '/app/find',
       name: 'Find',
+      path: '/app/find',
       component: Find,
       children: [{
         path: '/app/find/1',
@@ -136,6 +141,31 @@ const routes = [
     {
       path: '/app/list',
       component: ListDetail
+    },
+    {
+      path: '/app/artist',
+      component: Artist,
+      name: 'Artist',
+      children: [{
+        path: '/app/artist/hotsong',
+        component: hotsong,
+        name: 'HotSong'
+      },
+      {
+        path: '/app/artist/album',
+        component: artistAlbum,
+        name: 'Artist_album'
+      },
+      {
+        path: '/app/artist/mv',
+        component: artistMv,
+        name: 'Artist_mv'
+      },
+      {
+        path: '/app/artist/desc',
+        component: artistDesc,
+        name: 'Artist_desc'
+      }]
     }]
   }
 ]

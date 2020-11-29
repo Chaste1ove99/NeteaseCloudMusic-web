@@ -10,11 +10,11 @@
           <div class="new-music" ref="new-music">
             <div>
               <el-menu :default-active="activeIndex" class="el-menu-demo song-bar" mode="horizontal">
-  <el-menu-item index="1" class="item1" @click="getSong(0)">全部</el-menu-item>
-  <el-menu-item index="2" class="item2" @click="getSong(7)">华语</el-menu-item>
-  <el-menu-item index="3" class="item3" @click="getSong(96)">欧美</el-menu-item>
-  <el-menu-item index="4" class="item4" @click="getSong(16)">韩国</el-menu-item>
-  <el-menu-item index="5" class="item5" @click="getSong(8)">日本</el-menu-item>
+  <el-menu-item index="1" class="item" @click="getSong(0)">全部</el-menu-item>
+  <el-menu-item index="2" class="item" @click="getSong(7)">华语</el-menu-item>
+  <el-menu-item index="3" class="item" @click="getSong(96)">欧美</el-menu-item>
+  <el-menu-item index="4" class="item" @click="getSong(16)">韩国</el-menu-item>
+  <el-menu-item index="5" class="item" @click="getSong(8)">日本</el-menu-item>
   </el-menu>
             </div>
             <div>
@@ -122,11 +122,7 @@ export default {
 }
 </script>
 <style scoped>
-.top-nav {
-  width: 1002px;
-}
 .newSong-container{
-  width: 1100px;
   margin-left: 10px;
   margin-bottom: 10%;
 }
@@ -152,11 +148,14 @@ export default {
 }
 .single-album {
   display: inline-block;
-  width: 250px;
+  width: 50%;
   margin-top: 20px;
   padding-bottom: 30px;
+  overflow: hidden;
 }
 .name-size {
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 15px;
 }
 .artist-size {
@@ -164,32 +163,14 @@ export default {
   color: #cccccc;
 }
 /**这里设置了固定位置*/
-.item1 {
-  left: 34%;
-  padding-bottom: -3px;
-}
-.item2 {
-  left: 34.5%;
-  padding-bottom: -3px;
-}
-.item3 {
-  left: 35%;
-  padding-bottom: -3px;
-}
-.item4 {
-  left: 35.5%;
-  padding-bottom: -3px;
-}
-.item5{
-  left: 36%;
-  padding-bottom: -3px;
-}
+
 .play-btn {
   border: none;
 }
 .top-nav {
   margin-top: 20px;
   border: 1px solid #F0EDEC;
+  width: 1000px;
 }
 .song-name {
   overflow: hidden;
@@ -202,27 +183,43 @@ export default {
 .song-detail {
   color: #676463;
   font-size: 13px;
-  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  overflow: hidden;
 }
 .single-block {
   display: inline-block;
-  width: 500px;
   border: 1px solid #F0EDEC;
   border-top: none;
+  width: 499px;
+  overflow: hidden;
 }
 .num {
   display: inline-block;
   position: relative;
-  top: -10px;
   width: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  vertical-align: middle;
+  padding-left: 10px;
+  padding-right: 10px;
+  top: 50%;
+  transform: translateY(50%);
+  text-align: center;
+  vertical-align: top;
 }
 .song-title {
   display: inline-block;
-  width: 450px;
+  overflow: hidden;
+  width: 455px;
+}
+.top100-block{
+  width: 1100px;
+}
+.song-bar{
+  display: flex;
+  padding-left: 30%;
+  padding-right: 30%;
+}
+.item{
+  flex: 1;
+  text-align: center;
 }
 </style>

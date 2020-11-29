@@ -61,7 +61,7 @@ export default {
   flex: 1;
 }
 .item-fm{
-  padding-top: 50px;
+  margin-top: 50px;
   flex: 2;
 }
 </style>

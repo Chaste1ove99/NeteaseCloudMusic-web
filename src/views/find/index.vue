@@ -16,7 +16,7 @@
   class="search"
   @select="handleSelect"
 ></el-autocomplete>
-   <el-button icon="el-icon-mic" class="icon" circle></el-button>
+   <el-button icon="el-icon-search" class='search-btn' circle @click="handleSearch"></el-button>
   </div>
 </el-menu>
         </div>
@@ -24,7 +24,7 @@
     </div>
 </template>
 <script>
-import { searchAdvice } from '@/api/get.js'
+import { searchAdvice, searchResult } from '@/api/get.js'
 export default {
   name: 'FindIndex',
   data () {
@@ -43,7 +43,8 @@ export default {
       // queryString = queryString.toString()
       // }
       searchAdvice(queryString).then(res => {
-        const result = res.data.result
+        const { result } = res.data
+        // console.log(result)
         // 别忘了清空
         if (result.songs) {
           for (let i = 0; i < result.songs.length; i++) {
@@ -63,20 +64,39 @@ export default {
             this.searchSuggest.push(result.artists[i])
           }
         }
+        if (result.playlists) {
+          for (let i = 0; i < result.playlists.length; i++) {
+            this.searchSuggest.push(result.playlists[i])
+          }
+        }
         this.suggest = []
         const results = this.searchSuggest
-        console.log(results)
-        // 利用新的对象建立value属性 再把这些对象推入到数组里面去
+        // console.log(results)
+        // 利用新的对象建立value属性 再把这些对象加入到数组里面去
         for (let i = 0; i < results.length; i++) {
           this.advice.value = results[i].name
           this.suggest.push(this.advice)
           this.advice = { value: '' }
         }
+        // 防抖 清除之前的timeout
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           callback(this.suggest)
-        }, 3000 * Math.random())
+        }, 1000 * Math.random())
       })
+    },
+    // 搜索
+    handleSearch () {
+      console.log(this.search)
+      searchResult(this.search).then(res => {
+        const { result } = res.data
+        if (result.artist) {
+          this.$router.push('/app/artist/hotsong?id=' + result.artist[0].id)
+        }
+      })
+    },
+    handleSelect (item) {
+      console.log(item)
     }
   }
 }
@@ -111,5 +131,8 @@ export default {
 .FindPage{
   display: flex;
   flex-direction: column;
+}
+.search-btn{
+  border: none;
 }
 </style>
