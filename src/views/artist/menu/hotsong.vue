@@ -28,7 +28,7 @@ export default {
     getArtistSong(this.$route.query.id).then(res => {
       this.hotsong = res.data.hotSongs
       for (let i = 0; i < this.hotsong.length; i++) {
-        this.hotsong[i].index = i
+        this.hotsong[i].order = i
       }
     })
   }

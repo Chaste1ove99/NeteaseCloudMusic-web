@@ -56,3 +56,8 @@ getlikelist(this.userID).then(res => {
      <div class="top1">{{item.top1.name}} - {{item.top1.ar[0].name}}</div>
      <div class="top2">{{item.top2.name}} - {{item.top2.ar[0].name}}</div>
      <div class="top3">{{item.top3.name}} - {{item.top3.ar[0].name}}</div>
+
+           <el-image
+      class="pic"
+      :src='playing.al.picUrl'
+      fit="fill"></el-image>

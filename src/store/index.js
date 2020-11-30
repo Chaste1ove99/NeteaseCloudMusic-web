@@ -6,8 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     playing: {},
-    playingList: {},
-    code: 1
+    playingList: {}
   },
   mutations: {
     intoplaying (state, intoPlaying) {
@@ -15,9 +14,6 @@ const store = new Vuex.Store({
     },
     publishList (state, tracks) {
       state.playingList = tracks
-    },
-    refresh (state, code) {
-      state.code = code
     }
   },
   actions: {

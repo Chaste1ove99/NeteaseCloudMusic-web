@@ -14,7 +14,6 @@
   :fetch-suggestions="querySearchAsync"
   placeholder="搜索内容"
   class="search"
-  @select="handleSelect"
 ></el-autocomplete>
    <el-button icon="el-icon-search" class='search-btn' circle @click="handleSearch"></el-button>
   </div>
@@ -24,7 +23,8 @@
     </div>
 </template>
 <script>
-import { searchAdvice, searchResult } from '@/api/get.js'
+import { searchAdvice } from '@/api/get.js'
+// import { getSongUrl } from '@/api/song.js'
 export default {
   name: 'FindIndex',
   data () {
@@ -87,16 +87,11 @@ export default {
     },
     // 搜索
     handleSearch () {
-      console.log(this.search)
-      searchResult(this.search).then(res => {
-        const { result } = res.data
-        if (result.artist) {
-          this.$router.push('/app/artist/hotsong?id=' + result.artist[0].id)
-        }
-      })
-    },
-    handleSelect (item) {
-      console.log(item)
+      if (this.search === '') {
+        this.$message('您还没输入内容哦')
+      } else {
+        this.$router.push('/app/result/song?query=' + this.search)
+      }
     }
   }
 }
@@ -113,13 +108,14 @@ export default {
 }
 .search-bar{
   margin-left: 50px;
-  flex: 2;
+  flex: 3;
 }
 .icon {
   border: none;
 }
 .search {
   border-radius: 5px;
+  width: 250px;
 }
 .main {
   margin-top: 10px;

@@ -87,12 +87,15 @@ export const checkMobile = user => {
 /**
  * 顶部栏搜索
  */
-export const searchResult = keywords => {
+export const searchResult = (keywords, num, type) => {
   return request({
     method: 'GET',
-    url: '/search/multimatch',
+    url: '/search/cloudsearch',
     params: {
-      keywords
+      keywords,
+      limit: 30,
+      offset: (num) * 30,
+      type
     }
   })
 }

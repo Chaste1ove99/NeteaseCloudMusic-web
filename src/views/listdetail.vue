@@ -8,7 +8,8 @@
       fit="fill"></el-image>
       <div class="demo-datails">
         <div class="title"><div class="label">歌单</div>{{listdetails.name}}</div>
-        <div class="creator"><div class="demo-image">
+        <div class="creator">
+          <div class="demo-image">
     <el-image
     class="creator-img"
       style="width: 30px; height: 30px;border-radius:15px"
@@ -41,19 +42,16 @@
 <div class="tabs" ref="song-desk">
   <div class="songtabs">
     <div class="head-bar"><span></span></div>
-    <div class="dwl-bar"><span></span></div>
-    <div class="dwl-bar"><span></span></div>
     <div class="song-bar"><span class="bar-title">歌曲名称</span></div>
     <div class="singer-bar"><span class="bar-title">歌手</span></div>
     <div class="alb-bar"><span class="bar-title">专辑</span></div>
   </div>
   <div class="songblocks">
-    <div v-for="(item, index) in tracks" :key='index' class="song-border" @dblclick="playSong(item)">
-      <span class="head-bar">{{item.head}}</span>
-      <span class="dwl-bar" @click="togger(item.id,item.like)"><i v-if="item.like" class="el-icon-star-on"/><i v-else class="el-icon-star-off"></i></span>
+    <div v-for="(item, index) in listdetails.tracks" :key='index' class="song-border" @dblclick="playSong(item)">
+      <span class="head-bar">{{index+1}}</span>
       <div class="song-bar">{{item.name}}</div>
-    <div class="singer-bar">{{item.singer}}</div>
-    <div class="alb-bar">{{item.albums}}</div></div>
+    <div class="singer-bar">{{item.ar[0].name}}</div>
+    <div class="alb-bar">{{item.al.name}}</div></div>
   </div>
 </div>
 <div class="comment-tab none" ref="comment-desk">
@@ -108,15 +106,13 @@
   </div>
 </div>
   </div>
+  </div>
+        </div>
       </div>
 </div>
-</div>
-    </div>
 </template>
 <script>
 import { getListDetail, getListComment } from '@/api/songlist.js'
-import { getlikelist, toggerlike } from '@/api/user.js'
-import { getSongUrl } from '@/api/song.js'
 import { Doc, Text, Paragraph, Heading, Bold, Underline, Italic, Strike, ListItem, BulletList, OrderedList } from 'element-tiptap'
 export default {
   name: 'ListDetailIndex',
@@ -126,8 +122,6 @@ export default {
       description: '',
       elIcon: 'el-icon-arrow-down',
       activeName: 'first',
-      song: { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, musicurl: '' },
-      tracks: [],
       localTime: 0,
       userID: 0,
       ids: [],
@@ -149,8 +143,7 @@ export default {
       comment: [],
       hotcomment: [],
       Sum: 0,
-      currentPage: 1,
-      intoPlaying: { id: 0, musicurl: '', name: '', singer: '', picUrl: '', like: '' }
+      currentPage: 1
     }
   },
   created () {
@@ -179,38 +172,10 @@ export default {
             this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
           }
         })
-        // 判断是不是小红心歌曲
-        getlikelist(this.userID).then(res => {
-          console.log(res)
-          this.ids = res.data.ids
-          for (let j = 0; j < this.ids.length; j++) {
-            for (let i = 0; i < this.tracks.length; i++) {
-              if (this.ids[j] === this.tracks[i].id) {
-                this.tracks[i].like = true
-              }
-            }
-            // if (this.listdetails.tracks[i].id === this.ids[j]) {
-            // console.log('123')
-            // }
-          }
-          // console.log(this.ids)
-        })
         // 转化作者时间戳
         this.getLocalCreateTime(this.listdetails.createTime)
         for (let i = 0; i < this.listdetails.tracks.length; i++) {
-          this.song.name = this.listdetails.tracks[i].name
-          this.song.albums = this.listdetails.tracks[i].al.name
-          if (i < 9) {
-            this.song.head = '0' + (i + 1)
-          } else {
-            this.song.head = (i + 1)
-          }
-          this.song.singer = this.listdetails.tracks[i].ar[0].name
-          this.song.picUrl = this.listdetails.tracks[i].al.picUrl
-          this.song.id = this.listdetails.tracks[i].id
-          this.song.index = i
-          this.tracks.push(this.song)
-          this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, musicurl: '' }
+          this.listdetails.tracks[i].order = i
         }
       })
     } else {
@@ -251,18 +216,6 @@ export default {
       var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
       var strDate = Y + M + D + h + m + s
       return strDate.slice(0, 10)
-    },
-    // 收藏切换
-    togger (id, like) {
-      toggerlike(id, !like).then(res => {
-        console.log(res)
-      })
-      // 改变数据的属性
-      for (let i = 0; i < this.tracks.length; i++) {
-        if (this.tracks[i].id === id) {
-          this.tracks[i].like = !this.tracks[i].like
-        }
-      }
     },
     // 实现中部栏的切换视图
     toggletoList () {
@@ -306,116 +259,29 @@ export default {
     // 双击获取音乐url并且播放功能
     playSong (item) {
       // 如果双击的是正在播放的 直接终止流程
-      if (item.id === this.intoPlaying.id) {
+      if (item.id === this.playing.id) {
         return false
       } else {
-        for (let i = 0; i < this.tracks.length; i++) {
-          getSongUrl(this.tracks[i].id).then(res => {
-            this.tracks[i].musicurl = res.data.data[0].url
-          })
-        }
-        getSongUrl(item.id).then(res => {
-          // console.log(res)
-          // 把歌曲有关数据放在本地储存 实现跨组件通信
-          this.intoPlaying.singer = item.singer
-          this.intoPlaying.name = item.name
-          this.intoPlaying.id = item.id
-          this.intoPlaying.musicurl = res.data.data[0].url
-          this.intoPlaying.picUrl = item.picUrl
-          this.intoPlaying.index = item.index
-          this.intoPlaying.like = item.like
-          // 本地储存只能储存JSON字符串
-          // 否则对象只显示obj obj
-          // 必须先把对象转化才能储存
-          // window.localStorage.setItem('intoPlaying', JSON.stringify(this.intoPlaying))
-          // 同一页面监听本地储存变化
-          // 必要要定义新的本地储存方式
-          // 这里使用vuex监听
-          this.$store.commit('intoplaying', this.intoPlaying)
-          // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
-          // 当页面刷新后保证上次播放的音乐不丢失
-          window.localStorage.setItem('intoPlaying', JSON.stringify(this.intoPlaying))
-          // 应该把歌单传到footer组件中
-          this.$store.commit('publishList', this.tracks)
-        })
+        // console.log(item)
+        // 本地储存只能储存JSON字符串
+        // 否则对象只显示obj obj
+        // 必须先把对象转化才能储存
+        // window.localStorage.setItem('intoPlaying', JSON.stringify(this.intoPlaying))
+        // 同一页面监听本地储存变化
+        // 必要要定义新的本地储存方式
+        // 这里使用vuex监听
+        this.$store.commit('intoplaying', item)
+        // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
+        // 当页面刷新后保证上次播放的音乐不丢失
+        window.localStorage.setItem('intoPlaying', JSON.stringify(item))
+        // 应该把歌单传到footer组件中
+        this.$store.commit('publishList', this.listdetails.tracks)
       }
     }
   },
   computed: {
-    updateCode: function () {
-      return this.$store.state.code
-    }
-  },
-  watch: {
-    updateCode (val) {
-      if (val === 0) {
-        this.tracks = []
-        // 重新渲染一次数据
-        if (this.$route.query.id) {
-        // console.log(this.$route.query.id)
-          getListDetail(this.$route.query.id).then(res => {
-            // 没做付费的那个判断
-            this.listdetails = res.data.playlist
-            // console.log(this.listdetails.description)
-            // this.description = this.listdetails.description.replace(/\n/g, '<br />')
-            this.userID = localStorage.getItem('userID')
-            // 获取歌单评论
-            getListComment(this.$route.query.id, 0).then(res => {
-              // console.log(res)
-              this.Sum = res.data.total
-              this.comment = []
-              this.hotcomment = []
-              this.comment = res.data.comments
-              this.hotcomment = res.data.hotComments
-              // 转化评论时间戳问题
-              // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
-              for (let i = 0; i < this.comment.length; i++) {
-                this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
-              }
-              for (let i = 0; i < this.hotcomment.length; i++) {
-                this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
-              }
-            })
-            // 判断是不是小红心歌曲
-            getlikelist(this.userID).then(res => {
-              this.ids = res.data.ids
-              for (let j = 0; j < this.ids.length; j++) {
-                for (let i = 0; i < this.tracks.length; i++) {
-                  if (this.ids[j] === this.tracks[i].id) {
-                    this.tracks[i].like = true
-                  }
-                }
-                // if (this.listdetails.tracks[i].id === this.ids[j]) {
-                // console.log('123')
-                // }
-              }
-              // console.log(this.ids)
-            })
-            // 转化作者时间戳
-            this.getLocalCreateTime(this.listdetails.createTime)
-            for (let i = 0; i < this.listdetails.tracks.length; i++) {
-              this.song.name = this.listdetails.tracks[i].name
-              this.song.albums = this.listdetails.tracks[i].al.name
-              if (i < 9) {
-                this.song.head = '0' + (i + 1)
-              } else {
-                this.song.head = (i + 1)
-              }
-              this.song.singer = this.listdetails.tracks[i].ar[0].name
-              this.song.picUrl = this.listdetails.tracks[i].al.picUrl
-              this.song.id = this.listdetails.tracks[i].id
-              this.song.index = i
-              this.tracks.push(this.song)
-              this.song = { name: '', albums: '', singer: '', time: '', head: '', like: false, id: 0, picUrl: '', index: 0, musicurl: '' }
-            }
-          })
-        } else {
-          this.$message.error('您的页面找不到啦')
-          this.$router.go(-1)
-        }
-        this.$store.commit('refresh', 1)
-      }
-      console.log(val)
+    playing: function () {
+      return this.$store.state.playing
     }
   }
 }
@@ -426,9 +292,8 @@ export default {
   }
   .demo-datails {
     display: inline-block;
-    top: 10%;
-    position: absolute;
     margin-left: 15px;
+    vertical-align: top;
   }
   .title {
     font-size: 22px;
@@ -544,6 +409,7 @@ export default {
   .head-bar {
     display: inline-block;
     width: 40px;
+    text-align: center;
   }
   .song-border {
     border: 1px solid #f5eeec;

@@ -25,6 +25,15 @@ import hotsong from '../views/artist/menu/hotsong.vue'
 import artistAlbum from '../views/artist/menu/album.vue'
 import artistMv from '../views/artist/menu/mv.vue'
 import artistDesc from '../views/artist/menu/desc.vue'
+import result from '../views/result/result.vue'
+import resultSong from '../views/result/song.vue'
+import resultAlbum from '../views/result/album.vue'
+import resultSinger from '../views/result/singer.vue'
+import resultMv from '../views/result/mv.vue'
+import resultList from '../views/result/list.vue'
+import resultChannel from '../views/result/channel.vue'
+import resultLyrics from '../views/result/lyrics.vue'
+import resultUser from '../views/result/user.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -141,6 +150,43 @@ const routes = [
     {
       path: '/app/list',
       component: ListDetail
+    },
+    {
+      path: '/app/result',
+      component: result,
+      name: 'Result',
+      children: [{
+        path: '/app/result/song',
+        component: resultSong
+      },
+      {
+        path: '/app/result/album',
+        component: resultAlbum
+      },
+      {
+        path: '/app/result/singer',
+        component: resultSinger
+      },
+      {
+        path: '/app/result/mv',
+        component: resultMv
+      },
+      {
+        path: '/app/result/list',
+        component: resultList
+      },
+      {
+        path: '/app/result/channel',
+        component: resultChannel
+      },
+      {
+        path: '/app/result/user',
+        component: resultUser
+      },
+      {
+        path: '/app/result/lyrics',
+        component: resultLyrics
+      }]
     },
     {
       path: '/app/artist',

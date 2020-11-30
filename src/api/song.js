@@ -65,3 +65,16 @@ export const getTopSong = type => {
     }
   })
 }
+
+/**
+ * 获取专辑
+ */
+export const getAlbum = id => {
+  return request({
+    method: 'GET',
+    url: '/album',
+    params: {
+      id
+    }
+  })
+}
