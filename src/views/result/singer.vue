@@ -36,6 +36,7 @@ export default {
     ChangePage (e) {
       searchResult(this.$route.query.query, e - 1, 100).then(res => {
         this.artists = res.data.result.artists
+        window.scrollTo(0, 0)
       })
     }
   },
@@ -50,7 +51,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .singer-container{
-  padding-bottom: 20%;
+  padding-bottom: 15%;
   .singer_wrap {
     padding: 5px;
     width: 600px;
@@ -65,7 +66,7 @@ export default {
         flex: 6;
         display: flex;
         align-items: center;
-        padding-left: 5px;
+        padding-left: 10px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
@@ -74,6 +75,7 @@ export default {
   .pagination {
     display: flex;
     justify-content: center;
+    padding-top: 10px;
   }
 }
 </style>

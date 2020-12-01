@@ -34,6 +34,10 @@ import resultList from '../views/result/list.vue'
 import resultChannel from '../views/result/channel.vue'
 import resultLyrics from '../views/result/lyrics.vue'
 import resultUser from '../views/result/user.vue'
+import album from '../views/album/index.vue'
+import albumSong from '../views/album/song.vue'
+import albumComment from '../views/album/comment.vue'
+import albumDesc from '../views/album/desc.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -150,6 +154,22 @@ const routes = [
     {
       path: '/app/list',
       component: ListDetail
+    },
+    {
+      path: '/app/album',
+      component: album,
+      children: [{
+        path: '', // path为空 子路由渲染到父路由出口占位符
+        component: albumSong
+      },
+      {
+        component: albumComment,
+        path: '/app/album/comment'
+      },
+      {
+        component: albumDesc,
+        path: '/app/album/desc'
+      }]
     },
     {
       path: '/app/result',

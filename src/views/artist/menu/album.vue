@@ -1,7 +1,7 @@
 <template>
     <div class="album_wrap">
         <div class="album_content">
-            <div v-for="(item, index) in albums" :key="index" class="single-album">
+            <div v-for="(item, index) in albums" :key="index" class="single-album" @dblclick="toAlbum(item)">
                 <el-image
       style="width: 150px; height: 150px"
       class="album-pic"
@@ -41,6 +41,9 @@ export default {
       getArtistAlbum(this.$route.query.id, e - 1).then(res => {
         this.albums = res.data.hotAlbums
       })
+    },
+    toAlbum (item) {
+      this.$router.push('/app/album?id=' + item.id)
     }
   }
 }

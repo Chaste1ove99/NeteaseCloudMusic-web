@@ -78,3 +78,17 @@ export const getAlbum = id => {
     }
   })
 }
+
+/**
+ * 获取专辑评论
+ */
+export const getAlbumComment = (id, page) => {
+  return request({
+    method: 'GET',
+    url: '/comment/album',
+    params: {
+      id,
+      offset: (page) * 20
+    }
+  })
+}

@@ -13,7 +13,7 @@
           <div class="cate-title">{{item.name}}</div>
           <div class="cate-singer">{{item.artists[0].name}}</div>
           <div class="cate-album">{{item.album.name}}</div>
-          <div class="cate-time">{{Math.floor(item.duration/60000)}}:{{Math.floor(item.duration/1000)-Math.floor(item.duration/60000)*60}}</div>
+          <div class="cate-time" style="color: #ccc">{{Math.floor(item.duration/60000)}}:{{Math.floor(item.duration/1000)-Math.floor(item.duration/60000)*60}}</div>
           </div>
       </div>
       <el-pagination
@@ -47,6 +47,7 @@ export default {
           const name = this.songs[i].artists[0].name
           this.songs[i].ar[0].name = name
         }
+        window.scrollTo(0, 0)
       })
     },
     playmusic (index) {
@@ -77,7 +78,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .song-container{
-  padding-bottom: 20%;
+  padding-bottom: 15%;
   .cate_wrap{
     display: flex;
     border-bottom: 1px #ccc solid;
@@ -117,10 +118,13 @@ export default {
         text-align: center;
     }
   }
+  .song_wrap{
+    font-size: 14px;
+  }
   .pagination{
       display: flex;
       justify-content: center;
-      padding-top: 20px;
+      padding-top: 10px;
   }
 }
 </style>
