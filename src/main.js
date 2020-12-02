@@ -6,6 +6,7 @@ import { ElementTiptapPlugin } from 'element-tiptap'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'element-tiptap/lib/index.css'
+import './style/iconfont.css'
 
 Vue.config.productionTip = false
 

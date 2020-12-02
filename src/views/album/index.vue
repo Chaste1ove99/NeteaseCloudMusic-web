@@ -18,7 +18,7 @@
   <el-button round icon='el-icon-top' size="small">分享</el-button>
   <el-button round  icon='el-icon-bottom' size="small">下载全部</el-button>
           </div>
-          <div class="album_singer">歌手:<a :href="'http://localhost:8080/#/app/artist/hotsong?id='+album.artist.id+'.html'">IU</a></div>
+          <div class="album_singer">歌手:<a :href="'http://localhost:8080/#/app/artist/hotsong?id='+album.artist.id+'.html'">{{album.artist.name}}</a></div>
           <div class="album_time">时间:{{(new Date(album.publishTime)).format("yyyy-MM-dd")}}</div>
       </div>
         </div>
@@ -28,30 +28,12 @@
   <el-menu-item index="3" @click="toDesc">专辑详情</el-menu-item>
         </el-menu>
         <div class="album_router">
-            <router-view :desc='desc'></router-view>
+            <router-view :desc='desc' :album='album'></router-view>
         </div>
     </div>
 </template>
 <script>
 import { getAlbum } from '@/api/song.js'
-// 注册转化时间戳的工具
-Date.prototype.format = function (fmt) {
-  var o = {
-    'M+': this.getMonth() + 1, // 月份
-    'd+': this.getDate(), // 日
-    'h+': this.getHours(), // 小时
-    'm+': this.getMinutes(), // 分
-    's+': this.getSeconds(), // 秒
-    'q+': Math.floor((this.getMonth() + 3) / 3) // 季度
-  }
-  if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length))
-  for (var k in o) {
-    if (new RegExp('(' + k + ')').test(fmt)) {
-      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)))
-      return fmt
-    }
-  }
-}
 export default {
   name: 'AlbumIndex',
   data () {

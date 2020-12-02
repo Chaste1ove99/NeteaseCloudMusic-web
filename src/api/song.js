@@ -92,3 +92,20 @@ export const getAlbumComment = (id, page) => {
     }
   })
 }
+
+/**
+ * 给评论点赞
+ */
+
+export const likeComment = (id, cid, t, type) => {
+  return request({
+    method: 'POST',
+    url: '/comment/like',
+    params: {
+      id,
+      cid,
+      t,
+      type
+    }
+  })
+}
