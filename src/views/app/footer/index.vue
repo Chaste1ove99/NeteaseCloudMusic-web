@@ -18,6 +18,7 @@
       <div class="tool-btn" v-if="!status"><el-button circle class='btn'  icon="el-icon-video-play" @click="play" :disabled.sync='diasbled'></el-button></div>
       <div class="tool-btn" v-if="status"><el-button  circle class='btn' icon="el-icon-video-pause" @click="pause"></el-button></div>
       <div class="tool-btn"><el-button circle class='btn' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
+      <div class="tool-btn" :class="[liked?'liked':'']"><i class="iconfont btn" @click="toggerLike">&#xe648;</i></div>
       </div>
       <div class="blank-box2"></div>
       </div>
@@ -25,6 +26,7 @@
 </template>
 <script>
 import { getSongUrl } from '@/api/song.js'
+import { getlikelist, toggerlike } from '@/api/user.js'
 export default {
   name: 'FootPlayer',
   data () {
@@ -38,12 +40,21 @@ export default {
       beforeIndex: 0,
       singerName: '',
       diasbled: false,
-      step: 1
+      step: 1,
+      userID: 0,
+      ids: [],
+      liked: false
     }
   },
   created () {
+    const timestamp = Date.parse(new Date())
+    this.userID = JSON.parse(window.localStorage.getItem('userID'))
     this.played = JSON.parse(window.localStorage.getItem('intoPlaying'))
     this.$store.commit('intoplaying', this.played)
+    getlikelist(this.userID, timestamp).then(res => {
+      this.ids = res.data.ids
+      console.log(this.ids)
+    })
   },
   methods: {
     // 将资源分为100份 并赋值给进度条的两个属性
@@ -75,6 +86,7 @@ export default {
       this.audio.maxTime = parseInt(res.target.duration)
       // console.log(this.audio.maxTime)
     },
+    // 播放下一首
     ended () {
       this.playAfter()
     },
@@ -104,6 +116,26 @@ export default {
         this.afterIndex = this.playing.order + 1
       }
       this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+    },
+    // 切换喜欢
+    toggerLike () {
+      const timestamp = Date.parse(new Date())
+      if (this.playing.liked === true) {
+        toggerlike(this.playing.id, false, timestamp).then(res => {
+          console.log(res)
+        })
+        this.liked = false
+      } else {
+        toggerlike(this.playing.id, true, timestamp).then(res => {
+          console.log(res)
+        })
+        this.liked = true
+      }
+      // 重新获取一次我喜欢列表 或者用算法操作也可以
+      getlikelist(this.userID, timestamp).then(res => {
+        this.ids = res.data.ids
+        console.log(this.ids)
+      })
     }
   },
   mounted () {
@@ -138,6 +170,12 @@ export default {
           this.pause()
         } else {
           this.diasbled = false
+        }
+        for (let i = 0; i < this.ids.length; i++) {
+          if (this.ids[i] === e.id) {
+            e.liked = true
+            this.liked = true
+          }
         }
         // console.log(res1)
         this.$set(e, 'musicurl', url)
@@ -204,5 +242,11 @@ export default {
 }
 .btn{
   border: none;
+}
+.btn:hover{
+  cursor: pointer;
+}
+.liked{
+  color: red;
 }
 </style>

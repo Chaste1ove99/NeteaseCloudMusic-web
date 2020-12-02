@@ -58,7 +58,8 @@ export default {
     }
   },
   created () {
-    getAlbum(this.$route.query.id).then(res => {
+    const timestamp = Date.parse(new Date())
+    getAlbum(this.$route.query.id, timestamp).then(res => {
       console.log(res)
       this.album = res.data.album
       this.desc = this.album.description

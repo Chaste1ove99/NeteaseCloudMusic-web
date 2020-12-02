@@ -28,19 +28,39 @@
         <span slot="title">账号</span>
       </el-menu-item>
       </div>
-      <el-menu-item index='/FM/1' class="item-fm">
+      <el-menu-item class="item-fm" @click="intoFM">
         <i class="el-icon-service"></i>
         <span slot="title">私人FM</span>
       </el-menu-item>
     </el-menu>
 </template>
 <script>
+import { personalFm } from '@/api/user.js'
 export default {
   name: 'asideIndex',
   data () {
     return {
       reg: '/^/[0-9a-zA-Z_]*/[0-9a-zA-Z_]*/',
-      activeIndex: this.reg.exec(this.$route.path)
+      activeIndex: this.reg.exec(this.$route.path),
+      songs: []
+    }
+  },
+  methods: {
+    intoFM () {
+      personalFm().then(res => {
+        this.songs = res.data.data
+        // console.log(this.songs)
+        for (let i = 0; i < this.songs.length; i++) {
+          this.songs[i].al = {}
+          this.songs[i].al.picUrl = this.songs[i].album.picUrl
+          this.songs[i].ar = []
+          this.songs[i].ar[0] = {}
+          this.songs[i].ar[0].name = this.songs[i].artists[0].name
+          this.songs[i].order = i
+        }
+        this.$store.commit('intoplaying', this.songs[0])
+        this.$store.commit('publishList', this.songs)
+      })
     }
   }
 }

@@ -1,12 +1,13 @@
 <template>
     <div class="comment_container">
       <div class="text_wrap">
-    <el-tiptap
-      v-model='content'
-      :extensions='extensions'
-      placeholder="留下你的评论 …"
-    ></el-tiptap>
-    <el-button class='comt_btn' round>评论</el-button>
+<el-input
+  type="textarea"
+  :rows="4"
+  placeholder="留下你的评论..."
+  v-model="content">
+</el-input>
+    <el-button class='comt_btn' round @click="sendComment">评论</el-button>
   </div>
   <div class="hotComment_wrap" v-if="hotComments">
     <span  style="font-weight: bold">精彩评论</span>
@@ -25,7 +26,7 @@
             <div class="comment_like" :class="[item.liked?'liked':'']"><i class="iconfont" style="font-size: 22px" @click="handleHotLike(item,index)">&#xe775;</i>
             <span class="like_count" :id="index">{{item.likedCount}}</span></div>
             <div class="comment_share"><i class="iconfont">&#xe600;</i></div>
-            <div class="comment_comt"><i class="iconfont">&#xe67e;</i></div>
+            <div class="comment_comt" @click="replyComment(item)"><i class="iconfont">&#xe67e;</i></div>
           </div>
           </div>
       </div>
@@ -49,7 +50,7 @@
               <div class="comment_like" :class="[item.liked?'liked':'']"><i class="iconfont" style="font-size: 22px" @click="handleLateLike(item,index)">&#xe775;</i>
               <span class="like_count" :id="100+index">{{item.likedCount}}</span></div>
             <div class="comment_share"><i class="iconfont">&#xe600;</i></div>
-            <div class="comment_comt"><i class="iconfont">&#xe67e;</i></div>
+            <div class="comment_comt" @click="replyComment(item)"><i class="iconfont">&#xe67e;</i></div>
             </div>
             </div>
       </div>
@@ -65,8 +66,7 @@
     </div>
 </template>
 <script>
-import { getAlbumComment, likeComment } from '@/api/song.js'
-import { Doc, Text, Paragraph, Heading, Bold, Underline, Italic, Strike, ListItem, BulletList, OrderedList } from 'element-tiptap'
+import { getAlbumComment, likeComment, handleComment } from '@/api/song.js'
 Date.prototype.format = function (fmt) {
   var o = {
     'M+': this.getMonth() + 1, // 月份
@@ -91,36 +91,27 @@ export default {
   data () {
     return {
       content: '',
-      extensions: [
-        new Doc(),
-        new Text(),
-        new Paragraph(),
-        new Heading({ level: 5 }),
-        new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
-        new Underline({ bubble: true, menubar: false }), // 在气泡菜单而不在菜单栏中渲染菜单按钮
-        new Italic(),
-        new Strike(),
-        new ListItem(),
-        new BulletList(),
-        new OrderedList()
-      ],
       hotComments: [],
-      comments: []
+      comments: [],
+      replyCode: 0,
+      commentId: 0
     }
   },
   props: ['album'],
   methods: {
+    // 点赞功能 注意这里由于接口原因存在BUG
     handleHotLike (item, index) {
+      const timestamp = Date.parse(new Date())
       const dom1 = document.getElementById(index)
       if (item.liked === true) {
-        likeComment(this.album.id, item.commentId, 0, 3).then(res => {
+        likeComment(this.album.id, item.commentId, 0, 3, timestamp).then(res => {
           // console.log(res)
           item.liked = !item.liked
           item.likedCount = item.likedCount - 1
           dom1.innerHTML = item.likedCount
         })
       } else if (item.liked === false) {
-        likeComment(this.album.id, item.commentId, 1, 3).then(res => {
+        likeComment(this.album.id, item.commentId, 1, 3, timestamp).then(res => {
           // console.log(res)
           item.liked = !item.liked
           item.likedCount = item.likedCount + 1
@@ -129,16 +120,17 @@ export default {
       }
     },
     handleLateLike (item, index) {
+      const timestamp = Date.parse(new Date())
       const dom2 = document.getElementById(index + 100)
       if (item.liked === true) {
-        likeComment(this.album.id, item.commentId, 0, 3).then(res => {
+        likeComment(this.album.id, item.commentId, 0, 3, timestamp).then(res => {
           // console.log(res)
           item.liked = !item.liked
           item.likedCount = item.likedCount - 1
           dom2.innerHTML = item.likedCount
         })
       } else if (item.liked === false) {
-        likeComment(this.album.id, item.commentId, 1, 3).then(res => {
+        likeComment(this.album.id, item.commentId, 1, 3, timestamp).then(res => {
           // console.log(res)
           item.liked = !item.liked
           item.likedCount = item.likedCount + 1
@@ -146,6 +138,7 @@ export default {
         })
       }
     },
+    // 翻页
     changePage (e) {
       getAlbumComment(this.$route.query.id, e - 1).then(res => {
         // console.log(res)
@@ -153,10 +146,44 @@ export default {
         this.comments = res.data.comments
         window.scrollTo(0, 600)
       })
+    },
+    // 发送评论
+    sendComment () {
+      // 直接评论
+      const timestamp = Date.parse(new Date())
+      if (this.replyCode === 0) {
+        handleComment(1, 3, this.album.id, this.content, timestamp).then(res => {
+          this.$message('评论成功')
+          this.content = ''
+        })
+        this.$router.go(0)
+        // 回复别人的评论
+      } else {
+        // 将字符串拆开
+        const content = this.content.split('')
+        const index = content.findIndex(v => v === ':')
+        const newContent = this.content.slice(index + 1, content.length, timestamp)
+        handleComment(2, 3, this.album.id, newContent, this.commentId, timestamp).then(res => {
+          console.log(res)
+          this.$message('回复成功')
+          this.replyCode = 0
+          this.content = ''
+        })
+        this.$router.go(0)
+      }
+    },
+    // 回复评论
+    replyComment (item) {
+      window.scrollTo(0, 200)
+      this.content = '回复' + item.user.nickname + ':'
+      this.replyCode = 1
+      this.commentId = item.commentId
+      console.log(this.commentId)
     }
   },
   created () {
-    getAlbumComment(this.$route.query.id, 0).then(res => {
+    const timestamp = Date.parse(new Date())
+    getAlbumComment(this.$route.query.id, 0, timestamp).then(res => {
       // console.log(res)
       this.hotComments = res.data.hotComments
       this.comments = res.data.comments
@@ -176,10 +203,10 @@ export default {
     }
   }
   .hotComment_wrap{
-    padding: 20px;
+    margin: 20px;
     .Comment_block{
-      padding: 20px;
-      padding-left: 0;
+      margin: 20px;
+      margin-left: 0;
       font-size: 12px;
       position: relative;
       .Comment_icon{
@@ -193,10 +220,10 @@ export default {
         }
       }
       .Comment_detail{
+        padding-top: 15px;
         padding-left: 60px;
         width: 600px;
         display: inline-block;
-        vertical-align: top;
         .Comment_reply{
           background-color: #ccc;
         }
@@ -231,17 +258,20 @@ export default {
               padding: 5px;
               display: inline-block;
             }
+             .comment_comt:hover{
+               cursor: pointer;
+             }
           }
         }
       }
     }
   }
   .lateComment_wrap{
-    padding: 20px;
+    margin: 20px;
       .lateComment_block{
-      padding: 20px;
+      margin: 20px;
       font-size: 12px;
-      padding-left: 0;
+      margin-left: 0;
       position: relative;
       .lateComment_icon{
         padding-right: 10px;
@@ -257,7 +287,7 @@ export default {
         padding-left: 60px;
         width: 600px;
         display: inline-block;
-        vertical-align: top;
+        padding-top: 15px;
         .lateComment_reply{
           background-color: #ccc;
         }
@@ -292,6 +322,9 @@ export default {
               padding: 5px;
               display: inline-block;
             }
+            .comment_comt:hover{
+               cursor: pointer;
+             }
           }
         }
       }

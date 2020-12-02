@@ -69,12 +69,13 @@ export const getTopSong = type => {
 /**
  * 获取专辑
  */
-export const getAlbum = id => {
+export const getAlbum = (id, timestamp) => {
   return request({
     method: 'GET',
     url: '/album',
     params: {
-      id
+      id,
+      timestamp
     }
   })
 }
@@ -82,13 +83,14 @@ export const getAlbum = id => {
 /**
  * 获取专辑评论
  */
-export const getAlbumComment = (id, page) => {
+export const getAlbumComment = (id, page, timestamp) => {
   return request({
     method: 'GET',
     url: '/comment/album',
     params: {
       id,
-      offset: (page) * 20
+      offset: (page) * 20,
+      timestamp
     }
   })
 }
@@ -97,7 +99,7 @@ export const getAlbumComment = (id, page) => {
  * 给评论点赞
  */
 
-export const likeComment = (id, cid, t, type) => {
+export const likeComment = (id, cid, t, type, timestamp) => {
   return request({
     method: 'POST',
     url: '/comment/like',
@@ -105,7 +107,26 @@ export const likeComment = (id, cid, t, type) => {
       id,
       cid,
       t,
-      type
+      type,
+      timestamp
+    }
+  })
+}
+
+/**
+ * 发送/删除评论
+ */
+export const handleComment = (t, type, id, content, commentId, timestamp) => {
+  return request({
+    method: 'POST',
+    url: '/comment',
+    params: {
+      t,
+      type,
+      id,
+      content,
+      commentId,
+      timestamp
     }
   })
 }

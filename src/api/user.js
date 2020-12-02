@@ -12,12 +12,13 @@ export const getSubCount = () => {
 /**
  * 获取我喜欢的音乐
  */
-export const getlikelist = userID => {
+export const getlikelist = (userID, timestamp) => {
   return request({
     method: 'GET',
     url: '/likelist',
     params: {
-      uid: userID
+      uid: userID,
+      timestamp
     }
   })
 }
@@ -51,13 +52,14 @@ export const getUserDetail = userID => {
 /**
  * 收藏/喜欢音乐
  */
-export const toggerlike = (id, like) => {
+export const toggerlike = (id, like, timestamp) => {
   return request({
     method: 'POST',
     url: '/like',
     params: {
       id,
-      like
+      like,
+      timestamp
     }
   })
 }
@@ -111,5 +113,15 @@ export const getEvent = id => {
       uid: id,
       limit: 30
     }
+  })
+}
+
+/**
+ * 私人FM
+ */
+export const personalFm = () => {
+  return request({
+    method: 'GET',
+    url: '/personal_fm'
   })
 }
