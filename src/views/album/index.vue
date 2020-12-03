@@ -13,7 +13,7 @@
               <div class="album_name">{{album.name}}<span class="transNames" v-if='album.transNames'>({{album.transNames[0]}})</span></div>
           </div>
           <div class="album_btn_list">
-  <el-button icon="el-icon-caret-right" round>播放全部</el-button>
+  <el-button icon="el-icon-caret-right" round @click="playAll">播放全部</el-button>
   <el-button icon="el-icon-folder-add"   round size="small">收藏</el-button>
   <el-button round icon='el-icon-top' size="small">分享</el-button>
   <el-button round  icon='el-icon-bottom' size="small">下载全部</el-button>
@@ -28,7 +28,7 @@
   <el-menu-item index="3" @click="toDesc">专辑详情</el-menu-item>
         </el-menu>
         <div class="album_router">
-            <router-view :desc='desc' :album='album'></router-view>
+            <router-view :desc='desc' :album='album' ref="child"></router-view>
         </div>
     </div>
 </template>
@@ -55,6 +55,9 @@ export default {
     toDesc () {
       this.activeIndex = 3
       this.$router.push('/app/album/desc?id=' + this.album.id)
+    },
+    playAll () {
+      this.$refs.child.$emit('playall')
     }
   },
   created () {

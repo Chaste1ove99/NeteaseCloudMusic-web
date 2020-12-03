@@ -14,11 +14,14 @@
       </div>
       <div class="blank-box1"></div>
       <div class='playing-tool'>
-      <div class="tool-btn"><el-button circle class='btn' icon="el-icon-arrow-left" @click="playBefore"></el-button></div>
-      <div class="tool-btn" v-if="!status"><el-button circle class='btn'  icon="el-icon-video-play" @click="play" :disabled.sync='diasbled'></el-button></div>
-      <div class="tool-btn" v-if="status"><el-button  circle class='btn' icon="el-icon-video-pause" @click="pause"></el-button></div>
-      <div class="tool-btn"><el-button circle class='btn' icon='el-icon-arrow-right' @click="playAfter"></el-button></div>
-      <div class="tool-btn" :class="[liked?'liked':'']"><i class="iconfont btn" @click="toggerLike">&#xe648;</i></div>
+      <div class="tool-btn" :class="[liked?'liked':'']"><i class="iconfont btn" @click="toggerLike">&#xe687;</i></div>
+      <div class="tool-btn liked"><i class="iconfont btn" @click="playBefore">&#xe603;</i></div>
+      <div class="tool-btn liked" v-if="!status"><i class='iconfont btn'  @click="play">&#xe618;</i></div>
+      <div class="tool-btn liked" v-if="status"><i class='iconfont btn' @click="pause">&#xe632;</i></div>
+      <div class="tool-btn liked"><i class="iconfont btn" @click="playAfter">&#xe602;</i></div>
+      <div class="tool-btn liked" v-if="mode === 1"><i class="iconfont btn" @click="changeMode()">&#xe60f;</i></div>
+      <div class="tool-btn liked" v-if="mode === 2"><i class="iconfont btn" @click="changeMode()">&#xe601;</i></div>
+      <div class="tool-btn liked" v-if="mode === 3"><i class="iconfont btn" @click="changeMode()">&#xe604;</i></div>
       </div>
       <div class="blank-box2"></div>
       </div>
@@ -43,7 +46,8 @@ export default {
       step: 1,
       userID: 0,
       ids: [],
-      liked: false
+      liked: false,
+      mode: 1
     }
   },
   created () {
@@ -88,7 +92,26 @@ export default {
     },
     // 播放下一首
     ended () {
-      this.playAfter()
+      switch (this.mode) {
+        case 1:
+          // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
+          if (this.playing.order === (this.playingList.length - 1)) {
+            this.afterIndex = this.playing.order
+          } else {
+            this.afterIndex = this.playing.order + 1
+          }
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
+        case 2:
+        // mode为 2随机播放
+          this.afterIndex = Math.ceil(Math.random() * this.playingList.length)
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
+        case 3:
+          this.$refs.audioA.currentTime = 0
+          this.sliderTime = 0
+          this.$refs.audioA.play()
+      }
     },
     // 动态加载滑块进度
     updateSlider () {
@@ -100,22 +123,59 @@ export default {
     },
     // 上一首
     playBefore () {
-      if (this.playing.order === 0) {
-        this.beforeIndex = this.playing.order
-      } else {
-        this.beforeIndex = this.playing.order - 1
+      switch (this.mode) {
+        case 1:
+          // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
+          if (this.playing.order === 0) {
+            this.afterIndex = this.playing.order
+          } else {
+            this.afterIndex = this.playing.order - 1
+          }
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
+        case 2:
+        // mode为 2随机播放
+          this.afterIndex = Math.ceil(Math.random() * this.playingList.length)
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
+        case 3:
+          // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
+          if (this.playing.order === 0) {
+            this.afterIndex = this.playing.order
+          } else {
+            this.afterIndex = this.playing.order - 1
+          }
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
       }
-      this.$store.commit('intoplaying', this.playingList[this.beforeIndex])
     },
     // 下一首
     playAfter () {
-      // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
-      if (this.playing.order === (this.playingList.length - 1)) {
-        this.afterIndex = this.playing.order
-      } else {
-        this.afterIndex = this.playing.order + 1
+      switch (this.mode) {
+        case 1:
+          // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
+          if (this.playing.order === (this.playingList.length - 1)) {
+            this.afterIndex = this.playing.order
+          } else {
+            this.afterIndex = this.playing.order + 1
+          }
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
+        case 2:
+        // mode为 2随机播放
+          this.afterIndex = Math.ceil(Math.random() * this.playingList.length)
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
+        case 3:
+          // 保证当前播放是歌单最后一首的时候 点击下一首不影响当前播放
+          if (this.playing.order === (this.playingList.length - 1)) {
+            this.afterIndex = this.playing.order
+          } else {
+            this.afterIndex = this.playing.order + 1
+          }
+          this.$store.commit('intoplaying', this.playingList[this.afterIndex])
+          break
       }
-      this.$store.commit('intoplaying', this.playingList[this.afterIndex])
     },
     // 切换喜欢
     toggerLike () {
@@ -124,11 +184,13 @@ export default {
         toggerlike(this.playing.id, false, timestamp).then(res => {
           console.log(res)
         })
+        this.playing.liked = false
         this.liked = false
       } else {
         toggerlike(this.playing.id, true, timestamp).then(res => {
           console.log(res)
         })
+        this.playing.liked = true
         this.liked = true
       }
       // 重新获取一次我喜欢列表 或者用算法操作也可以
@@ -136,6 +198,17 @@ export default {
         this.ids = res.data.ids
         console.log(this.ids)
       })
+    },
+    // 改变播放模式
+    changeMode (e) {
+      // 当前mode为1
+      if (this.mode === 1) {
+        this.mode = 2
+      } else if (this.mode === 2) {
+        this.mode = 3
+      } else {
+        this.mode = 1
+      }
     }
   },
   mounted () {
@@ -230,15 +303,14 @@ export default {
   overflow: hidden;
 }
 .playing-tool {
-  width: 600px;
+  width: 400px;
   display: flex;
   align-items: center;
-  padding-right: 300px;
+  padding-left: 100px;
+  padding-right: 500px;
 }
 .tool-btn {
-  display: inline-block;
-  margin-right: 10px;
-  width: 50px;
+  flex: 1;
 }
 .btn{
   border: none;

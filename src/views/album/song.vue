@@ -40,6 +40,11 @@ export default {
     getAlbum(this.$route.query.id).then(res => {
       this.songs = res.data.songs
     })
+  },
+  mounted () {
+    this.$nextTick(function () {
+      this.$on('playall', this.playmusic(0))
+    })
   }
 }
 </script>
