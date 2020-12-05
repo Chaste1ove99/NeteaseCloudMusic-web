@@ -116,6 +116,7 @@ export default {
 .search {
   border-radius: 5px;
   width: 250px;
+  position: relative;
 }
 .main {
   margin-top: 10px;
@@ -130,5 +131,7 @@ export default {
 }
 .search-btn{
   border: none;
+  position: absolute;
+  margin-right: 20px;
 }
 </style>

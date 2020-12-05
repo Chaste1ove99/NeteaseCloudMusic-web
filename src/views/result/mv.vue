@@ -1,7 +1,7 @@
 <template>
   <div class="MV-container">
     <div class="mv_wrap" v-for="(item,index) in mvs" :key="index">
-      <div class="mv_pic"><el-image
+      <div class="mv_pic" @click="intomvpage(item)"><el-image
       style="width: 240px; height: 120px"
       :src="item.cover"
       fit="cover"></el-image></div>
@@ -33,6 +33,9 @@ export default {
         this.mvs = res.data.result.mvs
         window.scrollTo(0, 0)
       })
+    },
+    intomvpage (item) {
+      this.$router.push('/app/mvplayer?id=' + item.id)
     }
   },
   created () {
@@ -52,6 +55,10 @@ export default {
     width: 30%;
     display: inline-block;
     padding: 10px;
+    .mv_pic:hover{
+      opacity: 65%;
+      cursor: pointer;
+    }
     .mv_name{
       text-overflow: ellipsis;
       overflow: hidden;

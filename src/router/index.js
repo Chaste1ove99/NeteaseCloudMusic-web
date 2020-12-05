@@ -38,6 +38,8 @@ import album from '../views/album/index.vue'
 import albumSong from '../views/album/song.vue'
 import albumComment from '../views/album/comment.vue'
 import albumDesc from '../views/album/desc.vue'
+import mvplayer from '../views/mvplayer/index.vue'
+import videoplayer from '../views/videoplayer/index.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -68,6 +70,14 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/app/mvplayer',
+    component: mvplayer
+  },
+  {
+    path: '/app/videoplayer',
+    component: videoplayer
   },
   {
     path: '/app',

@@ -5,16 +5,6 @@
   <el-menu-item index="1" class="item" >MV精选</el-menu-item>
   <el-menu-item index="2" class="item">网易独家</el-menu-item>
   <el-menu-item index="3" class="item">全部MV</el-menu-item>
-  <div class="search-bar">
-  <el-autocomplete
-  v-model="search"
-  :fetch-suggestions="querySearchAsync"
-  placeholder="搜索内容"
-  class="search"
-  @select="handleSelect"
-></el-autocomplete>
-   <el-button icon="el-icon-mic" class="icon" circle></el-button>
-  </div>
 </el-menu>
         </div>
         <div class="main"><router-view></router-view></div>

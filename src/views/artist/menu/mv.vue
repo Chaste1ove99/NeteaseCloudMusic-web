@@ -5,6 +5,7 @@
               class="item-image"
       style="width: 160px; height: 90px"
       :src="item.imgurl16v9"
+      @click="intomv(item)"
       fit="cover"></el-image>
       <div class="item-name">{{item.name}}</div>
         </div>
@@ -23,6 +24,11 @@ export default {
     getArtistMV(this.$route.query.id).then(res => {
       this.mvList = res.data.mvs
     })
+  },
+  methods: {
+    intomv (item) {
+      this.$router.push('/app/mvplayer?id=' + item.id)
+    }
   }
 }
 </script>
@@ -39,5 +45,9 @@ width: 520px;
 }
 .item-image{
 display: inline-block;
+}
+.item-image:hover{
+display: inline-block;
+cursor: pointer;
 }
 </style>
