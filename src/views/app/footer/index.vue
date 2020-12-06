@@ -7,12 +7,11 @@
       <el-image
       class="pic"
       :src='playing.al.picUrl'
-      fit="fill"></el-image>
+      fit="cover"></el-image>
       <div class="song-detail">
       <div class='player-name'>{{playing.name}}</div>
       <div class='player-singer'>{{playing.ar[0].name}}</div>
       </div>
-      <div class="blank-box1"></div>
       <div class='playing-tool'>
       <div class="tool-btn" :class="[liked?'liked':'']"><i class="iconfont btn" @click="toggerLike">&#xe687;</i></div>
       <div class="tool-btn liked"><i class="iconfont btn" @click="playBefore">&#xe603;</i></div>
@@ -23,7 +22,6 @@
       <div class="tool-btn liked" v-if="mode === 2"><i class="iconfont btn" @click="changeMode()">&#xe601;</i></div>
       <div class="tool-btn liked" v-if="mode === 3"><i class="iconfont btn" @click="changeMode()">&#xe604;</i></div>
       </div>
-      <div class="blank-box2"></div>
       </div>
     </div>
 </template>
@@ -263,29 +261,25 @@ export default {
 }
 </script>
 <style scoped>
-.blank-box1{
-  flex: 4;
-}
-.blank-box2{
-  flex: 6;
-}
 .player {
   background: #fff;
   margin-left: 10px;
 }
 .pic {
   width: 100px;
+  height: 100px;
   border-radius: 20px;
 }
-.playing-container {
-  display: flex;
+.playing-container{
+  position: relative;
 }
 .song-detail {
   width: 300px;
-  padding-left: 10px;
-  display: flex;
-  justify-content: center;
+  padding-left: 110px;
   flex-direction: column;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .player-name {
   padding-bottom: 5px;
@@ -303,14 +297,19 @@ export default {
   overflow: hidden;
 }
 .playing-tool {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50px);
   width: 400px;
-  display: flex;
-  align-items: center;
-  padding-left: 100px;
+  padding-left: 400px;
   padding-right: 500px;
 }
 .tool-btn {
-  flex: 1;
+  display: inline-block;
+  width: 20px;
+  padding-top: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .btn{
   border: none;

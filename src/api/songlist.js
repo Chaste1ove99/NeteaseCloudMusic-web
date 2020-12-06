@@ -27,12 +27,13 @@ export const getCatList = () => {
 /**
  * 获取歌单详情
  */
-export const getListDetail = id => {
+export const getListDetail = (id, timestamp) => {
   return request({
     method: 'GET',
     url: '/playlist/detail',
     params: {
-      id
+      id,
+      timestamp
     }
   })
 }
@@ -40,14 +41,15 @@ export const getListDetail = id => {
 /**
  * 获取歌单评论
  */
-export const getListComment = (id, pageNum) => {
+export const getListComment = (id, pageNum, timestamp) => {
   return request({
     method: 'GET',
     url: '/comment/playlist',
     params: {
       id,
       limit: 20,
-      offset: (pageNum) * 20
+      offset: (pageNum) * 20,
+      timestamp
     }
   })
 }

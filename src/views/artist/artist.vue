@@ -65,6 +65,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .artist-container{
+  width: 1250px;
   padding: 10px;
   padding-bottom: 20%;
   .artist-alias{

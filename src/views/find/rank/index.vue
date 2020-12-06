@@ -7,6 +7,7 @@
                 <el-image
       style="width:150px; height: 150px"
       :src="item.coverImgUrl"
+      @click="intolist(item)"
       fit="fill"></el-image><div class="decoration">每日更新</div></div>
       <div class="detail">
       <div class="top3">1.{{item.top1.name}} - {{item.top1.ar[0].name}}</div>
@@ -22,6 +23,7 @@
                 <el-image
       style="width:195px; height: 195px"
       :src="item.coverImgUrl"
+      @click="intolist(item)"
       fit="fill"></el-image><div>{{item.name}}</div></div>
       </div></div>
         </div>
@@ -35,10 +37,10 @@ export default {
     return {
       officialList: [],
       globalList: [],
-      list1: { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0 },
+      list1: { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0, id: 0 },
       topList: [],
       playlist1: {},
-      list2: { coverImgUrl: '', name: '', index: 0 },
+      list2: { coverImgUrl: '', name: '', index: 0, id: 0 },
       playlist2: {}
     }
   },
@@ -56,6 +58,7 @@ export default {
         // 所以产生的结果顺序也有所偏差
         // 遍历的时候重新设置index 进行正确排序
         getListDetail(this.topList[i].id).then(res => {
+          this.list1.id = this.topList[i].id
           this.playlist1 = res.data.playlist
           this.list1.coverImgUrl = this.topList[i].coverImgUrl
           this.list1.name = this.topList[i].name
@@ -67,11 +70,12 @@ export default {
           this.officialList.push(this.list1)
           // 重新排序 确保加载顺序正确
           this.officialList.sort(this.compare('index'))
-          this.list1 = { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0 }
+          this.list1 = { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0, id: 0 }
         })
       }
       for (let i = 4; i < this.topList.length; i++) {
         getListDetail(this.topList[i].id).then(res => {
+          this.list2.id = this.topList[i].id
           this.playlist2 = res.data.playlist
           this.list2.coverImgUrl = this.topList[i].coverImgUrl
           this.list2.name = this.topList[i].name
@@ -80,7 +84,7 @@ export default {
           this.globalList.push(this.list2)
           // 重新排序 确保加载顺序正确
           this.globalList.sort(this.compare('index'))
-          this.list2 = { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0 }
+          this.list2 = { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0, id: 0 }
         })
       }
     })
@@ -92,6 +96,9 @@ export default {
         var value2 = b[property]
         return value1 - value2
       }
+    },
+    intolist (item) {
+      this.$router.push('/app/list?id=' + item.id)
     }
   }
 }
@@ -111,12 +118,19 @@ export default {
   padding-left: 15px;
   padding-right: 15px;
   display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   width: 450px;
+}
+.percent-rank:hover{
+  cursor: pointer;
+  opacity: 65%;
 }
 .detail {
   display: inline-block;
   position: relative;
-  top: -60px;
+  top: -50px;
 }
 .cover {
   display: inline-block;
@@ -124,7 +138,11 @@ export default {
 }
 .top3 {
   padding: 5px;
+  width: 270px;
   color:#7d7371;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .decoration {
     position: relative;
@@ -137,5 +155,9 @@ export default {
   display: inline-block;
   width: 200px;
   padding-left: 10px;
+}
+.global-rank:hover{
+  opacity: 65%;
+  cursor: pointer;
 }
 </style>

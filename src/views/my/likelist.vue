@@ -259,8 +259,17 @@ export default {
     },
     // 双击获取音乐url并且播放功能
     playSong (item) {
-      // 如果双击的是正在播放的 直接终止流程
-      if (item.id === this.playing.id) {
+      if (this.playing === null) {
+        for (let i = 0; i < this.listdetails.tracks; i++) {
+          this.listdetails.tracks[i].index = i
+        }
+        this.$store.commit('intoplaying', item)
+        // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
+        // 当页面刷新后保证上次播放的音乐不丢失
+        window.localStorage.setItem('intoPlaying', JSON.stringify(item))
+        // 应该把歌单传到footer组件中
+        this.$store.commit('publishList', this.listdetails.tracks)
+      } else if (item.id === this.playing.id) {
         return false
       } else {
         // 本地储存只能储存JSON字符串
@@ -292,6 +301,7 @@ export default {
 <style scoped>
   .songlist {
     margin-left: 40px;
+    width: 800px;
   }
   .demo-datails {
     display: inline-block;

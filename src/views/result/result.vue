@@ -102,6 +102,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .result-container{
+  width: 1250px;
   padding: 10px;
   .top_wrap{
     .query_desc{

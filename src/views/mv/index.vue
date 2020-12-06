@@ -96,6 +96,6 @@ export default {
     border-radius: 5px;
 }
 .mvPage {
-  width: 1150px;
+  width: 1250px;
 }
 </style>

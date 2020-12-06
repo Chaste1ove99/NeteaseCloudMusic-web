@@ -72,6 +72,7 @@ export default {
 </script>
 <style lang="less" scoped>
 .album-container{
+  width: 1250px;
   padding: 10px;
   padding-left: 20px;
   .album_top_wrap{

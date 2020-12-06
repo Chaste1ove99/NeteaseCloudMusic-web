@@ -80,6 +80,7 @@ export default {
   justify-content: center;
 }
 .user-container {
+    width: 1250px;
     position: fixed;
   width: 550px;
   border-right: 1px solid #cccccc;

@@ -22,6 +22,7 @@
       <el-image
       class="image"
       :src="mv[index].picUrl"
+      @click="intoPlayer(item)"
       fit="fill"></el-image>
        <span class="demonstration decoration artfont2">{{ mv[index].name }}</span>
        <p class="demonstration decoration artfont1" style="clear:both">{{ mv[index].artistName }}</p>

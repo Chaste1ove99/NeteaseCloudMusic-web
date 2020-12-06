@@ -82,7 +82,7 @@ export default {
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           callback(this.suggest)
-        }, 1000 * Math.random())
+        }, 1000)
       })
     },
     // 搜索
@@ -99,6 +99,7 @@ export default {
 <style scoped>
 .menu{
   display: flex;
+  width: 1250px;
   padding-left: 100px;
 }
 .item{

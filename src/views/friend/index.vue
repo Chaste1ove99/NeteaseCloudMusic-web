@@ -18,7 +18,7 @@ export default {
 </script>
 <style scoped>
 .friend-container {
-    width: 1100px;
+    width: 1250px;
 }
 .menu {
     display: flex;

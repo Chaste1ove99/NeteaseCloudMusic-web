@@ -94,7 +94,8 @@ export default {
       hotComments: [],
       comments: [],
       replyCode: 0,
-      commentId: 0
+      commentId: 0,
+      timeout: null
     }
   },
   props: ['album'],
@@ -142,7 +143,8 @@ export default {
     changePage (e) {
       getAlbumComment(this.$route.query.id, e - 1).then(res => {
         // console.log(res)
-        this.hotComments = res.data.hotComments
+        // this.hotComments = res.data.hotComments
+        this.hotComments = []
         this.comments = res.data.comments
         window.scrollTo(0, 600)
       })
@@ -156,20 +158,26 @@ export default {
           this.$message('评论成功')
           this.content = ''
         })
-        this.$router.go(0)
+        setTimeout(() => {
+          this.getComment()
+        }, 2000
+        )
         // 回复别人的评论
       } else {
         // 将字符串拆开
         const content = this.content.split('')
         const index = content.findIndex(v => v === ':')
-        const newContent = this.content.slice(index + 1, content.length, timestamp)
+        const newContent = this.content.slice(index + 1, content.length)
         handleComment(2, 3, this.album.id, newContent, this.commentId, timestamp).then(res => {
           console.log(res)
           this.$message('回复成功')
           this.replyCode = 0
           this.content = ''
         })
-        this.$router.go(0)
+        setTimeout(() => {
+          this.getComment()
+        }, 2000
+        )
       }
     },
     // 回复评论
@@ -179,6 +187,13 @@ export default {
       this.replyCode = 1
       this.commentId = item.commentId
       // console.log(this.commentId)
+    },
+    getComment () {
+      const timestamp = Date.parse(new Date())
+      getAlbumComment(this.$route.query.id, 0, timestamp).then(res => {
+        this.hotComments = res.data.hotComments
+        this.comments = res.data.comments
+      })
     }
   },
   created () {

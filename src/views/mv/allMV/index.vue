@@ -33,7 +33,7 @@
           </div>
           <div class="container">
           <div class="demo-image">
-  <div class="block list3" v-for="(item, index) in mv" :key="index">
+  <div class="block list3" v-for="(item, index) in mv" :key="index" @click="intoPlayer(item)">
       <el-image
       class="image"
       :src="mv[index].cover"
@@ -97,6 +97,9 @@ export default {
         this.Sum = res.data.count
         this.mv = res.data.data
       })
+    },
+    intoPlayer (item) {
+      this.$router.push('/app/mvplayer?id=' + item.id)
     }
   },
   created () {
@@ -143,6 +146,10 @@ export default {
   padding-right: 15px;
   padding-top: 15px;
   padding-bottom: 10px;
+}
+.list3:hover{
+  cursor: pointer;
+  opacity: 65%;
 }
 .artfont1 {
   font-family: 'DFKai-SB';

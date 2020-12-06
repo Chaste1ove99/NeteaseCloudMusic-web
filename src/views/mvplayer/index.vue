@@ -150,6 +150,13 @@ export default {
     })
   },
   methods: {
+    getcomment () {
+      const timestamp = Date.parse(new Date())
+      getmvcomment(this.$route.query.id, 0, timestamp).then(res => {
+        this.comments = res.data.comments
+        this.hotcomment = res.data.hotComments
+      })
+    },
     handleHotLike (item, index) {
       const timestamp = Date.parse(new Date())
       const dom1 = document.getElementById(index)
@@ -221,7 +228,7 @@ export default {
       const timestamp = Date.parse(new Date())
       getmvcomment(this.$route.query.id, e - 1, timestamp).then(res => {
         this.comments = res.data.comments
-        this.hotcomment = res.data.hotComments
+        this.hotcomment = []
       })
     },
     // 发送评论
@@ -232,30 +239,34 @@ export default {
         handleComment(1, 1, this.$route.query.id, this.content, timestamp).then(res => {
           this.$message('评论成功')
           this.content = ''
+          setTimeout(() => {
+            this.getcomment()
+          }, 10000)
         })
-        this.$router.go(0)
         // 回复别人的评论
       } else {
         // 将字符串拆开
         const content = this.content.split('')
         const index = content.findIndex(v => v === ':')
-        const newContent = this.content.slice(index + 1, content.length, timestamp)
+        const newContent = this.content.slice(index + 1, content.length)
         handleComment(2, 1, this.$route.query.id, newContent, this.commentId, timestamp).then(res => {
           console.log(res)
           this.$message('回复成功')
           this.replyCode = 0
           this.content = ''
+          setTimeout(() => {
+            this.getcomment()
+          }, 10000)
         })
-        this.$router.go(0)
       }
     },
     // 回复评论
     replyComment (item) {
+      console.log(item)
       window.scrollTo(0, 300)
       this.content = '回复' + item.user.nickname + ':'
       this.replyCode = 1
       this.commentId = item.commentId
-      // console.log(this.commentId)
     }
   }
 }

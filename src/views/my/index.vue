@@ -69,7 +69,7 @@ export default {
     height: 50px;
   }
   .user{
-    width: 580px;
+    width: 1250px;
   }
   .header{
     text-align: center;

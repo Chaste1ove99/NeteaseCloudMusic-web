@@ -47,7 +47,7 @@
     <div class="alb-bar"><span class="bar-title">专辑</span></div>
   </div>
   <div class="songblocks">
-    <div v-for="(item, index) in listdetails.tracks" :key='index' class="song-border" @dblclick="playSong(item)">
+    <div v-for="(item, index) in songs" :key='index' class="song-border" @dblclick="playSong(item)">
       <span class="head-bar">{{index+1}}</span>
       <div class="song-bar">{{item.name}}</div>
     <div class="singer-bar">{{item.ar[0].name}}</div>
@@ -55,38 +55,64 @@
   </div>
 </div>
 <div class="comment-tab none" ref="comment-desk">
-  <div class="text">
-    <el-tiptap
-      v-model="content"
-      :extensions="extensions"
-      placeholder="留下你的评论 …"
-    />
-    <el-button class='comt-btn' round>评论</el-button>
+          <div class="comment_input"><el-input
+  type="textarea"
+  :rows="4"
+  placeholder="留下你的评论..."
+  v-model="content">
+</el-input><div class="comment_btn" @click="sendComment">评论</div>
+</div>
+<div class="hot_comment" v-if="hotcomment.length">
+  <div class="comment_title">最热评论</div>
+  <div class="comment_wrap" v-for="(item, index) in hotcomment" :key="index">
+          <div class="Comment_icon">
+        <el-image
+        class="Comment_img"
+      style="width: 50px; height: 50px"
+      :src="item.user.avatarUrl"
+      fit="cover"></el-image></div>
+      <div class="Comment_detail">
+        <div class="Comment_content"><a>{{item.user.nickname}}: </a><span>{{item.content}}</span></div>
+        <div class="Comment_reply" v-if="item.beReplied.length > 0"><a>@{{item.beReplied[0].user.nickname}}: </a><span>{{item.beReplied[0].content}}</span></div>
+          <div class="Comment_menu"><div class="comment_time">{{(new Date(item.time)).format("yyyy年MM月dd日 hh:mm")}}</div>
+          <div class="comment_tool">
+            <div class="comment_like" :class="[item.liked?'liked':'']"><i class="iconfont" style="font-size: 22px" @click="handleHotLike(item,index)">&#xe775;</i>
+            <span class="like_count" :id="index">{{item.likedCount}}</span></div>
+            <div class="comment_share"><i class="iconfont">&#xe600;</i></div>
+            <div class="comment_comt" @click="replyComment(item)"><i class="iconfont">&#xe67e;</i></div>
+          </div>
+          </div>
+      </div>
   </div>
-  <div class="comment-block">
-    <div class="hot-comt" v-if='hotcomment'>
-      <div class="hot-title" v-if='hotcomment'>精彩评论</div>
-      <div v-for="(item,index) in hotcomment" :key="index" class="comt-block">
-        <el-image class="comter-img" :src='item.user.avatarUrl' fit='fit'></el-image>
-        <div class="comter-detail">
-        <div class="comter-name">{{item.user.nickname}}: <span class="comter-cont">{{item.content}}</span></div>
-        <div class="comter-time">{{item.time}}</div>
-        </div>
+</div>
+  <div class="lateComment_wrap">
+    <span style="font-weight: bold">最近评论</span>
+        <div v-for="(item,index) in comments" :key="index" class="lateComment_block">
+      <div class="lateComment_icon">
+        <el-image
+        class="lateComment_img"
+      style="width: 50px; height: 50px"
+      :src="item.user.avatarUrl"
+      fit="cover"></el-image></div>
+      <div class="lateComment_detail">
+        <div class="lateComment_content"><a>{{item.user.nickname}}: </a><span>{{item.content}}</span></div>
+        <div class="lateComment_reply" v-if="item.beReplied.length > 0"><a>@{{item.beReplied[0].user.nickname}}: </a><span>{{item.beReplied[0].content}}</span></div>
+          <div class="lateComment_menu">
+            <div class="comment_time">{{(new Date(item.time)).format("yyyy年MM月dd日 hh:mm")}}</div>
+            <div class="comment_tool">
+              <div class="comment_like" :class="[item.liked?'liked':'']"><i class="iconfont" style="font-size: 22px" @click="handleLateLike(item,index)">&#xe775;</i>
+              <span class="like_count" :id="100+index">{{item.likedCount}}</span></div>
+            <div class="comment_share"><i class="iconfont">&#xe600;</i></div>
+            <div class="comment_comt" @click="replyComment(item)"><i class="iconfont">&#xe67e;</i></div>
+            </div>
+            </div>
       </div>
     </div>
-    <div class="comt">最近评论({{Sum}})</div>
-    <div v-for="(item,index) in comment" :key="index" class="comt-block">
-        <el-image class="comter-img" :src='item.user.avatarUrl' fit='fit'></el-image>
-        <div class="comter-detail">
-        <div class="comter-name">{{item.user.nickname}}: <span class="comter-cont">{{item.content}}</span></div>
-        <div class="comter-time">{{item.time}}</div>
-        </div>
-      </div>
-      <el-pagination
-  class="page"
-  page-size=20
+          <el-pagination
+  background
+  page-size="20"
+  :current-page.sync='currentPage'
   @current-change='changePage'
-  :current-page.sync="currentPage"
   :total="Sum">
 </el-pagination>
   </div>
@@ -113,7 +139,8 @@
 </template>
 <script>
 import { getListDetail, getListComment } from '@/api/songlist.js'
-import { Doc, Text, Paragraph, Heading, Bold, Underline, Italic, Strike, ListItem, BulletList, OrderedList } from 'element-tiptap'
+import { likeComment, handleComment } from '@/api/song.js'
+import axios from 'axios'
 export default {
   name: 'ListDetailIndex',
   data () {
@@ -126,51 +153,46 @@ export default {
       userID: 0,
       ids: [],
       activeIndex: '1',
-      extensions: [
-        new Doc(),
-        new Text(),
-        new Paragraph(),
-        new Heading({ level: 5 }),
-        new Bold({ bubble: true }), // 在气泡菜单中渲染菜单按钮
-        new Underline({ bubble: true, menubar: false }), // 在气泡菜单而不在菜单栏中渲染菜单按钮
-        new Italic(),
-        new Strike(),
-        new ListItem(),
-        new BulletList(),
-        new OrderedList()
-      ],
       content: '',
-      comment: [],
+      comments: [],
       hotcomment: [],
       Sum: 0,
-      currentPage: 1
+      currentPage: 1,
+      idString: '',
+      songs: [],
+      replyCode: 0,
+      commentId: 0
     }
   },
   created () {
+    const timestamp = Date.parse(new Date())
     if (this.$route.query.id) {
       // console.log(this.$route.query.id)
       getListDetail(this.$route.query.id).then(res => {
-        // 没做付费的那个判断
         this.listdetails = res.data.playlist
+        // console.log(res)
+        // 没做付费的那个判断
         // console.log(this.listdetails.description)
         // this.description = this.listdetails.description.replace(/\n/g, '<br />')
         this.userID = localStorage.getItem('userID')
+        for (let i = 0; i < res.data.playlist.trackIds.length; i++) {
+          this.ids[i] = res.data.playlist.trackIds[i].id
+        }
+        this.idString = this.ids.join(',')
+        axios.get('http://localhost:3000/song/detail', {
+          params: {
+            ids: this.idString
+          }
+        }).then(res1 => {
+          // console.log(res1)
+          this.songs = res1.data.songs
+        })
         // 获取歌单评论
-        getListComment(this.$route.query.id, 0).then(res => {
+        getListComment(this.$route.query.id, 0, timestamp).then(res => {
           // console.log(res)
           this.Sum = res.data.total
-          this.comment = []
-          this.hotcomment = []
-          this.comment = res.data.comments
+          this.comments = res.data.comments
           this.hotcomment = res.data.hotComments
-          // 转化评论时间戳问题
-          // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
-          for (let i = 0; i < this.comment.length; i++) {
-            this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
-          }
-          for (let i = 0; i < this.hotcomment.length; i++) {
-            this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
-          }
         })
         // 转化作者时间戳
         this.getLocalCreateTime(this.listdetails.createTime)
@@ -184,6 +206,14 @@ export default {
     }
   },
   methods: {
+    getcomment () {
+      const timestamp = Date.parse(new Date())
+      getListComment(this.$route.query.id, 0, timestamp).then(res => {
+        this.Sum = res.data.total
+        this.comments = res.data.comments
+        this.hotcomment = res.data.hotComments
+      })
+    },
     open () {
       if (this.elIcon === 'el-icon-arrow-down') {
         this.elIcon = 'el-icon-arrow-up'
@@ -240,26 +270,103 @@ export default {
     changePage (page) {
       const pageNum = page - 1
       getListComment(this.$route.query.id, pageNum).then(res => {
-        // console.log(res)
+        console.log(res)
         this.Sum = res.data.total
-        this.comment = []
+        this.comments = res.data.comments
         this.hotcomment = []
-        this.comment = res.data.comments
-        this.hotcomment = res.data.hotComments
-        // 转化评论时间戳问题
-        // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
-        for (let i = 0; i < this.comment.length; i++) {
-          this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
-        }
-        for (let i = 0; i < this.hotcomment.length; i++) {
-          this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
-        }
+        // this.hotcomment = res.data.hotComments
       })
+    },
+    handleHotLike (item, index) {
+      const timestamp = Date.parse(new Date())
+      const dom1 = document.getElementById(index)
+      if (item.liked === true) {
+        likeComment(this.$route.query.id, item.commentId, 0, 2, timestamp).then(res => {
+          // console.log(res)
+          item.liked = !item.liked
+          item.likedCount = item.likedCount - 1
+          dom1.innerHTML = item.likedCount
+        })
+      } else if (item.liked === false) {
+        likeComment(this.$route.query.id, item.commentId, 1, 2, timestamp).then(res => {
+          // console.log(res)
+          item.liked = !item.liked
+          item.likedCount = item.likedCount + 1
+          dom1.innerHTML = item.likedCount
+        })
+      }
+    },
+    handleLateLike (item, index) {
+      const timestamp = Date.parse(new Date())
+      const dom2 = document.getElementById(index + 100)
+      if (item.liked === true) {
+        likeComment(this.$route.query.id, item.commentId, 0, 2, timestamp).then(res => {
+          // console.log(res)
+          item.liked = !item.liked
+          item.likedCount = item.likedCount - 1
+          dom2.innerHTML = item.likedCount
+        })
+      } else if (item.liked === false) {
+        likeComment(this.$route.query.id, item.commentId, 1, 2, timestamp).then(res => {
+          // console.log(res)
+          item.liked = !item.liked
+          item.likedCount = item.likedCount + 1
+          dom2.innerHTML = item.likedCount
+        })
+      }
+    },
+    sendComment () {
+      // 直接评论
+      const timestamp = Date.parse(new Date())
+      if (this.replyCode === 0) {
+        handleComment(1, 2, this.$route.query.id, this.content, timestamp).then(res => {
+          this.$message('评论成功')
+          this.content = ''
+          setTimeout(() => {
+            this.getcomment()
+          }, 2000
+          )
+        })
+        // 回复别人的评论
+      } else {
+        // 将字符串拆开
+        const content = this.content.split('')
+        const index = content.findIndex(v => v === ':')
+        const newContent = this.content.slice(index + 1, content.length)
+        handleComment(2, 2, this.$route.query.id, newContent, this.commentId, timestamp).then(res => {
+          // console.log(res)
+          this.$message('回复成功')
+          this.replyCode = 0
+          this.content = ''
+          setTimeout(() => {
+            this.getcomment()
+          }, 2000
+          )
+        })
+      }
+    },
+    // 回复评论
+    replyComment (item) {
+      window.scrollTo(0, 300)
+      this.content = '回复' + item.user.nickname + ':'
+      this.replyCode = 1
+      this.commentId = item.commentId
+      // console.log(this.commentId)
     },
     // 双击获取音乐url并且播放功能
     playSong (item) {
-      // 如果双击的是正在播放的 直接终止流程
-      if (item.id === this.playing.id) {
+      // 第一次播放
+      if (this.playing === null) {
+        for (let i = 0; i < this.listdetails.tracks; i++) {
+          this.listdetails.tracks[i].index = i
+        }
+        this.$store.commit('intoplaying', item)
+        // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
+        // 当页面刷新后保证上次播放的音乐不丢失
+        window.localStorage.setItem('intoPlaying', JSON.stringify(item))
+        // 应该把歌单传到footer组件中
+        this.$store.commit('publishList', this.listdetails.tracks)
+      } else if (item.id === this.playing.id) {
         return false
       } else {
         // console.log(item)
@@ -286,9 +393,34 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
+    .comment_input{
+      padding-top: 15px;
+    }
+    .comment_btn{
+      padding: 5px;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      position: absolute;
+      right: 0;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .comment_btn:hover{
+      cursor: pointer;
+      opacity: 65%;
+    }
+.red{
+  color:red;
+}
+.liked{
+  color:red
+}
   .songlist {
     margin-left: 40px;
+    width: 800px;
   }
   .demo-datails {
     display: inline-block;
@@ -464,45 +596,171 @@ export default {
     white-space: nowrap;
     width: 200px;
   }
-  .hot-comt {
-    margin-top: 60px;
-    width: 800px;
+  .comment-tab {
+    padding-bottom: 20%;
   }
-  .comt-btn {
-    float: right;
-    margin-top: 10px;
+   .comment_text{
+    padding-top: 40px;
+    position: relative;
+    .comment_title{
+      .title_name{
+        font-size: 18px;
+      }
+      .title_count{
+        color: #ccc;
+        font-size: 12px;
+        padding-left: 5px;
+      }
+    }
+    .comment_input{
+      padding-top: 15px;
+    }
+    .comment_btn{
+      padding: 5px;
+      padding-left: 20px;
+      padding-right: 20px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      position: absolute;
+      right: 0;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .comment_btn:hover{
+      cursor: pointer;
+      opacity: 65%;
+    }
   }
-  .comter-img {
-    height: 50px;
-    width: 50px;
-    border-radius: 25px;
-    display: inline-block;
+  .hot_comment{
+    padding-top: 50px;
+    font-size: 16px;
+    .comment_wrap{
+       margin: 20px;
+      margin-left: 0;
+      font-size: 12px;
+      position: relative;
+      .Comment_icon{
+        padding-right: 10px;
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        .Comment_img{
+          border-radius: 25px;
+        }
+      }
+      .Comment_detail{
+        padding-top: 15px;
+       margin-left: 60px;
+        width: 600px;
+        display: inline-block;
+        border-bottom: 1px solid #ccc;
+        .Comment_reply{
+          background-color: #ccc;
+        }
+        .Comment_menu{
+          padding-top: 10px;
+          color: #ccc;
+          overflow: hidden;
+          .comment_time{
+            display: inline-block;
+          }
+          .comment_tool{
+            display: inline-block;
+            float: right;
+            .comment_like{
+              display: inline-block;
+              width: 50px;
+              padding: 5px;
+              .like_count{
+                vertical-align: mid;
+              }
+            }
+            .comment_like:hover{
+              cursor: pointer;
+            }
+            .comment_share{
+              width: 20px;
+              padding: 5px;
+              display: inline-block;
+            }
+            .comment_comt{
+              width: 20px;
+              padding: 5px;
+              display: inline-block;
+            }
+             .comment_comt:hover{
+               cursor: pointer;
+             }
+          }
+        }
+      }
+    }
   }
-  .comter-detail {
-    display: inline-block;
-    width: 700px;
-    height: 100%;
-    margin-left: 20px;
-    vertical-align: top;
-  }
-  .comt-block {
-    margin-top: 30px;
-  }
-  .comter-time {
-    color: #b2adab;
-    font-size: 10px;
-  }
-  .comter-name {
-    color: #409EFF;
-    font-size: 14px;
-  }
-  .comter-cont {
-    color: black;
-  }
-  .comt {
-    margin-top: 30px;
-  }
-  .comment-block {
-    margin-bottom: 20%;
+  .lateComment_wrap{
+       padding-top: 50px;
+    font-size: 16px;
+      .lateComment_block{
+      margin: 20px;
+      font-size: 12px;
+      margin-left: 0;
+      position: relative;
+      .lateComment_icon{
+        padding-right: 10px;
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        .lateComment_img{
+          border-radius: 25px;
+        }
+      }
+      .lateComment_detail{
+        margin-left: 60px;
+        width: 600px;
+        display: inline-block;
+        padding-top: 15px;
+        border-bottom: 1px solid #ccc;
+        .lateComment_reply{
+          background-color: #ccc;
+        }
+        .lateComment_menu{
+          padding-top: 10px;
+          color: #ccc;
+          overflow: hidden;
+          .comment_time{
+            display: inline-block;
+          }
+          .comment_tool{
+              display: inline-block;
+              float: right;
+            .comment_like{
+              display: inline-block;
+              width: 40px;
+              padding: 5px;
+              .like_count{
+                vertical-align: mid;
+              }
+            }
+            .comment_like:hover{
+              cursor: pointer;
+            }
+            .comment_share{
+              width: 20px;
+              padding: 5px;
+              display: inline-block;
+            }
+            .comment_comt{
+              width: 20px;
+              padding: 5px;
+              display: inline-block;
+            }
+            .comment_comt:hover{
+               cursor: pointer;
+             }
+          }
+        }
+      }
+      }
   }
 </style>

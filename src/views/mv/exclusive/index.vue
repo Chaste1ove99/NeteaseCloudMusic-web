@@ -6,6 +6,7 @@
       <el-image
       class="image"
       :src="mv[index].cover"
+      @click="intoPlayer(item)"
       fit="fill"></el-image>
        <span class="demonstration decoration content-name">{{ mv[index].name }}</span>
   </div>
@@ -27,6 +28,11 @@ export default {
       // 请求结果没给总数 所以分页功能暂时做不了
       this.mv = res.data.data
     })
+  },
+  methods: {
+    intoPlayer (item) {
+      this.$router.push('/app/mvplayer?id=' + item.id)
+    }
   }
 }
 </script>
@@ -48,6 +54,9 @@ export default {
   width: 350px;
   height: 220px;
   padding: 10px 30px 30px 0px;
+}
+.list2:hover{
+  cursor: pointer;
 }
 .decoration {
   float: left;
