@@ -122,3 +122,19 @@ export const getTopList = () => {
     url: '/toplist'
   })
 }
+
+/**
+ * 点赞资源
+ */
+export const resourcelike = (type, t, id, timestamp) => {
+  return request({
+    method: 'GET',
+    url: '/resource/like',
+    params: {
+      type,
+      t,
+      id,
+      timestamp
+    }
+  })
+}

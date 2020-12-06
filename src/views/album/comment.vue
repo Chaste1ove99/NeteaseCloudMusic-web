@@ -178,7 +178,7 @@ export default {
       this.content = '回复' + item.user.nickname + ':'
       this.replyCode = 1
       this.commentId = item.commentId
-      console.log(this.commentId)
+      // console.log(this.commentId)
     }
   },
   created () {
@@ -221,9 +221,10 @@ export default {
       }
       .Comment_detail{
         padding-top: 15px;
-        padding-left: 60px;
+        margin-left: 60px;
         width: 600px;
         display: inline-block;
+        border-bottom: 1px solid #ccc;
         .Comment_reply{
           background-color: #ccc;
         }
@@ -284,10 +285,11 @@ export default {
         }
       }
       .lateComment_detail{
-        padding-left: 60px;
+       margin-left: 60px;
         width: 600px;
         display: inline-block;
         padding-top: 15px;
+        border-bottom: 1px solid #ccc;
         .lateComment_reply{
           background-color: #ccc;
         }
