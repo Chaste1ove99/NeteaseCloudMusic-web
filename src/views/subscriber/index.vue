@@ -27,15 +27,35 @@
               <div class="subscriber_general">
                   <div class="signature_block">
                   <span>个人介绍: </span>
-                  <span v-html="profile.signature" v-if="profile.signature" class="html subscriber_signature swap" id="signature">{{profile.signature}}</span>
-                  <span v-else style="display: inline-block">暂无</span>
+                  <div v-html="profile.signature" v-if="profile.signature" class="html subscriber_signature swap" id="signature">{{profile.signature}}</div>
+                  <span v-else>暂无</span>
                   </div>
-                  <div class="fold_btn" @click="fold">
+              </div>
+                <div class="fold_btn" @click="fold">
                       <i class="iconfont" v-if="foldstatus">&#xe607;</i>
                       <i class="iconfont" v-else>&#xe606;</i>
                   </div>
-              </div>
       </div>
+        <div class="songlist_wrap">
+                      <div class="songlist_title">歌单 <span style="fontSize: 12px">({{userplaylist.length}})</span></div>
+                      <div class="songlist_block" v-for="(item,index) in playlist" :key="index">
+                              <el-image
+      style="width: 180px; height: 180px"
+      @click="intoplaylist(item)"
+      :src="item.coverImgUrl"
+      class="songlist_img"
+      fit="cover"></el-image>
+      <div class="songlist_name">{{item.name}}</div>
+      <div class="songlist_count">{{item.trackCount}}首</div>
+                      </div>
+    <el-pagination
+    page-size="20"
+    class="pagination"
+    @current-change='changePage'
+  background
+  :total="userplaylist.length">
+</el-pagination>
+                  </div>
         </div>
             <div class="subscriber_list" id="menu" style="display:none">
                   <div class="list_item">拉入黑名单</div>
@@ -44,6 +64,7 @@
     </div>
 </template>
 <script>
+import { userPlayList } from '@/api/user.js'
 import { getuserdetail } from '@/api/subscriber.js'
 export default {
   name: 'subscriberIndex',
@@ -51,7 +72,9 @@ export default {
     return {
       profile: {},
       level: 0,
-      foldstatus: 0
+      foldstatus: 0,
+      userplaylist: [],
+      playlist: []
     }
   },
   created () {
@@ -59,6 +82,12 @@ export default {
       console.log(res)
       this.profile = res.data.profile
       this.level = res.data.level
+    })
+    userPlayList(this.$route.query.id, 0).then(res => {
+      console.log(res)
+      this.userplaylist = res.data.playlist
+      this.userplaylist[0].like = true
+      this.playlist = this.userplaylist.slice(0, 20)
     })
   },
   methods: {
@@ -84,6 +113,14 @@ export default {
           this.foldstatus = 0
           signature.classList.add('swap')
       }
+    },
+    changePage (e) {
+      const num1 = (e - 1) * 20
+      const num2 = e * 20
+      this.playlist = this.userplaylist.slice(num1, num2)
+    },
+    intoplaylist (item) {
+      this.$router.push('/app/list?id=' + item.id)
     }
   }
 }
@@ -191,23 +228,56 @@ export default {
                 padding-top: 10px;
                 line-height: 30px;
                 overflow: hidden;
+                display: inline-block;
                    .signature_block{
-                       width: 450px;
-                    display: inline-block;
+                    width: 450px;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
                 .subscriber_signature{
                     color: #989794;
+                    margin-top: -30px;
+                    margin-left: 60px;
                 }
                    }
+            }
                 .fold_btn{
-                    float: right;
                     display: inline-block;
+                    margin-top: 15px;
+                    vertical-align: top;
+                    padding-left: 10px;
                 }
                 .fold_btn:hover{
                     cursor: pointer;
                 }
+        }
+        .songlist_wrap{
+            padding-top: 30px;
+            .songlist_block{
+                padding-top: 20px;
+                padding-bottom: 20px;
+                padding-right: 10px;
+                display: inline-block;
+                width: 200px;
+                .songlist_img{
+                    border-radius: 10px;
+                }
+                .songlist_name{
+                    font-size: 14px;
+                    width: 180px;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+                .songlist_count{
+                    font-size: 14px;
+                    color: #ccc
+                }
+            }
+            .pagination{
+                padding-top: 20px;
+                display: flex;
+                justify-content: center;
             }
         }
     }

@@ -12,6 +12,7 @@
           <div class="demo-image">
     <el-image
     class="creator-img"
+    @click="intouser"
       style="width: 30px; height: 30px;border-radius:15px"
       :src="listdetails.creator.avatarUrl"
       fit="fill"></el-image><div class="creator-name">{{listdetails.creator.nickname}}  {{localTime}} 创建</div>
@@ -222,6 +223,9 @@ export default {
         this.elIcon = 'el-icon-arrow-down'
         this.$refs.desk.classList.add('ab')
       }
+    },
+    intouser () {
+      this.$router.push('/app/subscriber?id=' + this.listdetails.creator.userId)
     },
     // 转化作者时间戳
     getLocalCreateTime (nS) {
@@ -484,6 +488,9 @@ export default {
     vertical-align: top;
     width: 480px;
   }
+  .creator-name:hover{
+    cursor: pointer;
+  }
   .list-intro {
     font-size: 10px;
     display: block;
@@ -547,6 +554,9 @@ export default {
     display: inline-block;
     width: 40px;
     text-align: center;
+  }
+  .creator-img:hover{
+    cursor: pointer;
   }
   .song-border {
     border: 1px solid #f5eeec;

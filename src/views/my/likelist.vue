@@ -114,6 +114,7 @@
 </template>
 <script>
 import { getListDetail, getListComment } from '@/api/songlist.js'
+import axios from 'axios'
 import { Doc, Text, Paragraph, Heading, Bold, Underline, Italic, Strike, ListItem, BulletList, OrderedList } from 'element-tiptap'
 export default {
   name: 'likeListIndex',
@@ -149,40 +150,46 @@ export default {
     }
   },
   created () {
-    this.userID = localStorage.getItem('userID')
-    this.listID = localStorage.getItem('ListID')
-    // 没做付费的那个判断
-    // 存在异步请求的嵌套 所以极其容易造成顺序混乱
-    // 原来的代码在功能日志里 亲测存在bug
-    getListDetail(this.listID).then(res => {
-      // 没做付费的那个判断
-      this.listdetails = res.data.playlist
-      // console.log(this.listdetails.description)
-      // this.description = this.listdetails.description.replace(/\n/g, '<br />')
-      this.userID = localStorage.getItem('userID')
-      // 获取歌单评论
-      getListComment(this.listID, 0).then(res => {
+    const timestamp = Date.parse(new Date())
+    if (this.$route.query.id) {
+      // console.log(this.$route.query.id)
+      getListDetail(this.$route.query.id).then(res => {
+        console.log(res)
+        this.listdetails = res.data.playlist
         // console.log(res)
-        this.Sum = res.data.total
-        this.comment = []
-        this.hotcomment = []
-        this.comment = res.data.comments
-        this.hotcomment = res.data.hotComments
-        // 转化评论时间戳问题
-        // 这里热评放下面的原因是 当热评不存在的时候会中断下面的进程
-        for (let i = 0; i < this.comment.length; i++) {
-          this.comment[i].time = this.getLocalCommentTime(this.comment[i].time)
+        // 没做付费的那个判断
+        // console.log(this.listdetails.description)
+        // this.description = this.listdetails.description.replace(/\n/g, '<br />')
+        this.userID = localStorage.getItem('userID')
+        for (let i = 0; i < res.data.playlist.trackIds.length; i++) {
+          this.ids[i] = res.data.playlist.trackIds[i].id
         }
-        for (let i = 0; i < this.hotcomment.length; i++) {
-          this.hotcomment[i].time = this.getLocalCommentTime(this.hotcomment[i].time)
+        this.idString = this.ids.join(',')
+        axios.get('http://localhost:3000/song/detail', {
+          params: {
+            ids: this.idString
+          }
+        }).then(res1 => {
+          // console.log(res1)
+          this.songs = res1.data.songs
+        })
+        // 获取歌单评论
+        getListComment(this.$route.query.id, 0, timestamp).then(res => {
+          // console.log(res)
+          this.Sum = res.data.total
+          this.comments = res.data.comments
+          this.hotcomment = res.data.hotComments
+        })
+        // 转化作者时间戳
+        this.getLocalCreateTime(this.listdetails.createTime)
+        for (let i = 0; i < this.listdetails.tracks.length; i++) {
+          this.listdetails.tracks[i].order = i
         }
       })
-      // 转化作者时间戳
-      this.getLocalCreateTime(this.listdetails.createTime)
-      for (let i = 0; i < this.listdetails.tracks.length; i++) {
-        this.listdetails.tracks[i].order = i
-      }
-    })
+    } else {
+      this.$message.error('您的页面找不到啦')
+      this.$router.go(-1)
+    }
   },
   methods: {
     open () {

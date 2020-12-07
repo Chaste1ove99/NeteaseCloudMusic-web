@@ -6,6 +6,7 @@
             class="user_pic"
       style="width: 100px; height: 100px"
       :src="item.avatarUrl"
+      @click="intouser(item)"
       fit="cover"></el-image>
       </div>
       <div class="user_name">{{item.nickname}}</div>
@@ -42,6 +43,9 @@ export default {
       searchResult(this.$route.query.query, e - 1, 1002).then(res => {
         this.userprofiles = res.data.result.userprofiles
       })
+    },
+    intouser (item) {
+      this.$router.push('/app/subscriber?id=' + item.userId)
     }
   }
 }

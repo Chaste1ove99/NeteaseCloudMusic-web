@@ -25,13 +25,14 @@ export const getlikelist = (userID, timestamp) => {
 /**
  * 获取用户歌单
  */
-export const userPlayList = userID => {
+export const userPlayList = (userID, page) => {
   return request({
     method: 'GET',
     url: '/user/playlist',
     params: {
       uid: userID,
-      limit: 20
+      limit: 999,
+      offset: (page) * 20
     }
   })
 }

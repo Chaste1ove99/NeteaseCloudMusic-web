@@ -33,7 +33,7 @@ export default {
     }
   },
   created () {
-    userPlayList(localStorage.getItem('userID')).then(res => {
+    userPlayList(localStorage.getItem('userID'), 0).then(res => {
       console.log(res)
       this.playlist = res.data.playlist
       this.playlist[0].name = '我喜欢的音乐'
@@ -42,8 +42,7 @@ export default {
   methods: {
     intolist (item, index) {
       if (index === 0) {
-        localStorage.setItem('ListID', item.id)
-        this.$router.push('/app/my/likelist')
+        this.$router.push('/app/my/likelist?id=' + item.id)
       } else {
         this.$router.push('/app/list?id=' + item.id)
       }
