@@ -40,6 +40,7 @@ import albumComment from '../views/album/comment.vue'
 import albumDesc from '../views/album/desc.vue'
 import mvplayer from '../views/mvplayer/index.vue'
 import videoplayer from '../views/videoplayer/index.vue'
+import subscriber from '../views/subscriber/index.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -180,6 +181,10 @@ const routes = [
         component: albumDesc,
         path: '/app/album/desc'
       }]
+    },
+    {
+      path: '/app/subscriber',
+      component: subscriber
     },
     {
       path: '/app/result',

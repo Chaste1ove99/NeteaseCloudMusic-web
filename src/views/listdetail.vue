@@ -119,7 +119,7 @@
   </div>
 <div class="collect-tab none" ref="collect-desk">
   <div>
-    <div v-for="(item, index) in listdetails.subscribers" :key="index" class="sub-container">
+    <div v-for="(item, index) in listdetails.subscribers" :key="index" class="sub-container" @click="intosubscriber(item)">
       <el-image
       class="suber-img"
       :src="item.avatarUrl"
@@ -276,6 +276,11 @@ export default {
         this.hotcomment = []
         // this.hotcomment = res.data.hotComments
       })
+    },
+    // 进入用户
+    intosubscriber (item) {
+      console.log(item)
+      this.$router.push('/app/subscriber?id=' + item.userId)
     },
     handleHotLike (item, index) {
       const timestamp = Date.parse(new Date())
