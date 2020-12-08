@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     playing: {},
-    playingList: {}
+    playingList: {},
+    follow: 0
   },
   mutations: {
     intoplaying (state, intoPlaying) {
@@ -14,6 +15,9 @@ const store = new Vuex.Store({
     },
     publishList (state, tracks) {
       state.playingList = tracks
+    },
+    followCount (state, count) {
+      state.follow = count
     }
   },
   actions: {

@@ -62,6 +62,10 @@ export default {
       .user_pic{
         border-radius: 50px;
       }
+      .user_pic:hover{
+        cursor: pointer;
+        opacity: 65%;
+      }
     }
     .user_name{
       flex: 7;

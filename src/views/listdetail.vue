@@ -40,7 +40,7 @@
   @select="handleSelect"
 ></el-autocomplete><el-button icon="el-icon-search" circle></el-button></div>
 </el-menu>
-<div class="tabs" ref="song-desk">
+<div class="tabs" ref="song-desk" v-loading='loading'>
   <div class="songtabs">
     <div class="head-bar"><span></span></div>
     <div class="song-bar"><span class="bar-title">歌曲名称</span></div>
@@ -140,8 +140,7 @@
 </template>
 <script>
 import { getListDetail, getListComment } from '@/api/songlist.js'
-import { likeComment, handleComment } from '@/api/song.js'
-import axios from 'axios'
+import { likeComment, handleComment, getallsongs } from '@/api/song.js'
 export default {
   name: 'ListDetailIndex',
   data () {
@@ -159,35 +158,31 @@ export default {
       hotcomment: [],
       Sum: 0,
       currentPage: 1,
-      idString: '',
       songs: [],
       replyCode: 0,
-      commentId: 0
+      commentId: 0,
+      loading: false
     }
   },
   created () {
     const timestamp = Date.parse(new Date())
+    this.loading = true
     if (this.$route.query.id) {
       // console.log(this.$route.query.id)
       getListDetail(this.$route.query.id).then(res => {
         this.listdetails = res.data.playlist
-        // console.log(res)
-        // 没做付费的那个判断
-        // console.log(this.listdetails.description)
-        // this.description = this.listdetails.description.replace(/\n/g, '<br />')
-        this.userID = localStorage.getItem('userID')
         for (let i = 0; i < res.data.playlist.trackIds.length; i++) {
           this.ids[i] = res.data.playlist.trackIds[i].id
         }
-        this.idString = this.ids.join(',')
-        axios.get('http://localhost:3000/song/detail', {
-          params: {
-            ids: this.idString
-          }
-        }).then(res1 => {
-          // console.log(res1)
-          this.songs = res1.data.songs
-        })
+        // async 函数需要在外部定义this
+        const idString = this.ids.join(',')
+        const _this = this
+        async function getlist () {
+          const result = await getallsongs(idString)
+          console.log(result.data.songs)
+          _this.songs = result.data.songs
+        }
+        getlist()
         // 获取歌单评论
         getListComment(this.$route.query.id, 0, timestamp).then(res => {
           // console.log(res)
@@ -201,6 +196,7 @@ export default {
           this.listdetails.tracks[i].order = i
         }
       })
+      this.loading = false
     } else {
       this.$message.error('您的页面找不到啦')
       this.$router.go(-1)

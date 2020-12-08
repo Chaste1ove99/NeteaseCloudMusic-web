@@ -15,14 +15,16 @@
                   <i v-if="profile.gender === 2" class="iconfont pink">&#xe615;</i>
                   <i v-else-if="profile.gender === 1" class="iconfont blue">&#xe9bf;</i>
               </div>
-              <div class="subscriber_btn subsciber_dis"><div class="subscriber_btn_wrap"><i class="iconfont btn_icon">&#xe673;</i>发私信</div></div>
-              <div class="subscriber_btn"><div class="subscriber_btn_wrap"><i class="el-icon-plus btn_icon red"></i>关注</div></div>
+              <div class="subscriber_btn subsciber_dis"><div class="subscriber_btn_wrap" @click="foldmail"><i class="iconfont btn_icon">&#xe673;</i>发私信</div></div>
+              <div class="subscriber_btn">
+                  <div class="subscriber_btn_wrap" @click="follow(0)" v-if="profile.followed"><i class="el-icon-check btn_icon"></i>已关注</div>
+            <div class="subscriber_btn_wrap" @click="follow(1)" v-else><i class="el-icon-plus btn_icon red"></i>关注</div></div>
               <div class="subscriber_listmenu" @click="slidemenu($event)"><i class="iconfont">&#xe637;</i></div>
               </div>
               <div class="subscriber_event">
                   <div class="subscriber_event_wrap no_padding"><div class="count_wrap">{{profile.eventCount}}</div><div class="cate_name">动态</div></div>
-                  <div class="subscriber_event_wrap border"><div class="count_wrap">{{profile.newFollows}}</div><div class="cate_name">关注</div></div>
-                  <div class="subscriber_event_wrap"><div class="count_wrap">{{profile.followeds}}</div><div class="cate_name">粉丝</div></div>
+                  <div class="subscriber_event_wrap border" @click="intoFollows"><div class="count_wrap">{{profile.newFollows}}</div><div class="cate_name">关注</div></div>
+                  <div class="subscriber_event_wrap" @click="intoFollowed"><div class="count_wrap">{{profile.followeds}}</div><div class="cate_name">粉丝</div></div>
               </div>
               <div class="subscriber_general">
                   <div class="signature_block">
@@ -61,11 +63,15 @@
                   <div class="list_item">拉入黑名单</div>
                   <div class="list_item">举报</div>
               </div>
+              <div class="subscriber_mail" v-if="mailcode">
+                  <mail :profile='profile' @foldmenu='foldmenu'></mail>
+              </div>
     </div>
 </template>
 <script>
 import { userPlayList } from '@/api/user.js'
-import { getuserdetail } from '@/api/subscriber.js'
+import { getuserdetail, followUser } from '@/api/subscriber.js'
+import mail from './components/mail'
 export default {
   name: 'subscriberIndex',
   data () {
@@ -74,17 +80,21 @@ export default {
       level: 0,
       foldstatus: 0,
       userplaylist: [],
-      playlist: []
+      playlist: [],
+      userid: 0,
+      mailcode: 0
     }
   },
+  components: { mail },
   created () {
+    this.userid = this.$route.query.id
     getuserdetail(this.$route.query.id).then(res => {
-      console.log(res)
+      // console.log(res)
       this.profile = res.data.profile
       this.level = res.data.level
     })
     userPlayList(this.$route.query.id, 0).then(res => {
-      console.log(res)
+      // console.log(res)
       this.userplaylist = res.data.playlist
       this.userplaylist[0].like = true
       this.playlist = this.userplaylist.slice(0, 20)
@@ -94,13 +104,22 @@ export default {
     slidemenu (e) {
       const menu = document.getElementById('menu')
       menu.style.top = '45px'
-      menu.style.left = '750px'
+      menu.style.left = '770px'
       menu.style.display = 'inline-block'
       // console.log(menu.style.display)
       // 监听鼠标离开事件
       menu.addEventListener('mouseleave', function () {
         menu.style.display = 'none'
       })
+    },
+    foldmail () {
+      switch (this.mailcode) {
+        case 0:
+          this.mailcode = 1
+          break
+        case 1:
+          this.mailcode = 0
+      }
     },
     fold () {
       const signature = document.getElementById('signature')
@@ -121,6 +140,29 @@ export default {
     },
     intoplaylist (item) {
       this.$router.push('/app/list?id=' + item.id)
+    },
+    foldmenu (e) {
+      this.mailcode = e
+    },
+    // 关注取关用户
+    follow (e) {
+      const timestamp = Date.parse(new Date())
+      const _this = this
+      const handle = async function () {
+        const result = await followUser(_this.$route.query.id, e, timestamp)
+        console.log(result)
+      }
+      handle()
+      this.profile.followed = e
+    },
+    // 进入关注页面
+    intoFollows () {
+      this.$router.push('/app/follow?id=' + this.$route.query.id)
+      this.$store.commit('followCount', this.profile.newFollows)
+    },
+    intoFollowed () {
+      this.$router.push('/app/followed?id=' + this.$route.query.id)
+      this.$store.commit('followCount', this.profile.followeds)
     }
   }
 }
@@ -177,6 +219,10 @@ export default {
                   width: 70px;
                   border-radius: 20px;
                   display: inline-block;
+                  .subscriber_btn_wrap:hover{
+                      cursor: pointer;
+                      opacity: 65%;
+                  }
                   .subscriber_btn_wrap{
                       display: flex;
                       justify-content: center;
@@ -293,6 +339,11 @@ background-color: #e4e9f0;
     width: 100px;
     padding: 5px;
 }
+}
+.subscriber_mail{
+    position: fixed;
+    left: 980px;
+    top: 0px;
 }
 }
 .pink{

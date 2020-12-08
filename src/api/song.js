@@ -89,7 +89,7 @@ export const getAlbumComment = (id, page, timestamp) => {
 
 export const likeComment = (id, cid, t, type, timestamp) => {
   return request({
-    method: 'POST',
+    method: 'GET',
     url: '/comment/like',
     params: {
       id,
@@ -106,7 +106,7 @@ export const likeComment = (id, cid, t, type, timestamp) => {
  */
 export const handleComment = (t, type, id, content, commentId, timestamp) => {
   return request({
-    method: 'POST',
+    method: 'GET',
     url: '/comment',
     params: {
       t,
@@ -115,6 +115,19 @@ export const handleComment = (t, type, id, content, commentId, timestamp) => {
       content,
       timestamp,
       commentId
+    }
+  })
+}
+
+/**
+ * 请求完整的歌单
+ */
+export const getallsongs = ids => {
+  return request({
+    method: 'GET',
+    url: '/song/detail',
+    params: {
+      ids
     }
   })
 }

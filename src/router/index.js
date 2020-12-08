@@ -41,6 +41,8 @@ import albumDesc from '../views/album/desc.vue'
 import mvplayer from '../views/mvplayer/index.vue'
 import videoplayer from '../views/videoplayer/index.vue'
 import subscriber from '../views/subscriber/index.vue'
+import follow from '../views/follow/follow.vue'
+import followed from '../views/follow/followed.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -123,6 +125,14 @@ const routes = [
       path: '/app/user',
       name: user,
       component: user
+    },
+    {
+      path: '/app/follow',
+      component: follow
+    },
+    {
+      path: '/app/followed',
+      component: followed
     },
     {
       path: '/app/mv',

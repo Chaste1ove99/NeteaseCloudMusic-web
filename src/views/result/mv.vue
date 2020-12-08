@@ -1,5 +1,5 @@
 <template>
-  <div class="MV-container">
+  <div class="MV-container" :loading='loading'>
     <div class="mv_wrap" v-for="(item,index) in mvs" :key="index">
       <div class="mv_pic" @click="intomvpage(item)"><el-image
       style="width: 240px; height: 120px"
@@ -24,7 +24,8 @@ export default {
   data () {
     return {
       mvCount: 0,
-      mvs: []
+      mvs: [],
+      loading: false
     }
   },
   methods: {
@@ -39,11 +40,13 @@ export default {
     }
   },
   created () {
+    this.loading = true
     searchResult(this.$route.query.query, 0, 1004).then(res => {
       // console.log(res)
       this.mvCount = res.data.result.mvCount
       this.mvs = res.data.result.mvs
       this.$emit('Count', this.mvCount)
+      this.loading = false
     })
   }
 }
