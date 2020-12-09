@@ -181,6 +181,7 @@ export default {
           const result = await getallsongs(idString)
           console.log(result.data.songs)
           _this.songs = result.data.songs
+          _this.loading = false
         }
         getlist()
         // 获取歌单评论
@@ -196,7 +197,6 @@ export default {
           this.listdetails.tracks[i].order = i
         }
       })
-      this.loading = false
     } else {
       this.$message.error('您的页面找不到啦')
       this.$router.go(-1)
@@ -426,6 +426,7 @@ export default {
   .songlist {
     margin-left: 40px;
     width: 800px;
+    margin-bottom: 15%;
   }
   .demo-datails {
     display: inline-block;

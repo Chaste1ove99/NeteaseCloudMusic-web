@@ -1,5 +1,5 @@
 <template>
-    <div class="subscriber_container">
+    <div class="subscriber_container" v-loading='loading'>
         <div class="subscriber_info">
             <div class="subscriber_icon"> <el-image
             class="subscriber_image"
@@ -82,11 +82,13 @@ export default {
       userplaylist: [],
       playlist: [],
       userid: 0,
-      mailcode: 0
+      mailcode: 0,
+      loading: false
     }
   },
   components: { mail },
   created () {
+    this.loading = true
     this.userid = this.$route.query.id
     getuserdetail(this.$route.query.id).then(res => {
       // console.log(res)
@@ -98,6 +100,7 @@ export default {
       this.userplaylist = res.data.playlist
       this.userplaylist[0].like = true
       this.playlist = this.userplaylist.slice(0, 20)
+      this.loading = false
     })
   },
   methods: {

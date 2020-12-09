@@ -1,5 +1,5 @@
 <template>
-    <div class="selected-container">
+    <div class="selected-container" v-loading='loading'>
         <div class="new-mv">
             <div class="top-bar">最新MV</div>
             <div class="first" @click="intoPlayer(firstMV)">
@@ -40,10 +40,12 @@ export default {
     return {
       firstMV: {},
       newMVList: [],
-      mv: []
+      mv: [],
+      loading: false
     }
   },
   created () {
+    this.loading = true
     getNewMV().then(res => {
       // console.log(res)
       this.newMVList = res.data.data
@@ -51,6 +53,7 @@ export default {
     })
     getRecommondMV().then(res => {
       this.mv = res.data.result
+      this.loading = false
     })
   },
   methods: {

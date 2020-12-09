@@ -69,3 +69,19 @@ export const getFollowed = (uid, lasttime) => {
     }
   })
 }
+
+/**
+ * 获取私信内容
+ */
+export const getPrivateHistory = (uid, before, timestamp) => {
+  return request({
+    method: 'GET',
+    url: '/msg/private/history',
+    params: {
+      limit: 10,
+      uid,
+      before,
+      timestamp
+    }
+  })
+}

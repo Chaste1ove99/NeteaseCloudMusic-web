@@ -1,5 +1,5 @@
 <template>
-  <div class="song-container">
+  <div class="song-container" v-loading='loading'>
       <div class="cate_wrap">
           <div class="cate-num"></div>
           <div class="cate-title">音乐标题</div>
@@ -33,7 +33,8 @@ export default {
   data () {
     return {
       songs: [],
-      songCount: 0
+      songCount: 0,
+      loading: false
     }
   },
   methods: {
@@ -56,6 +57,7 @@ export default {
     }
   },
   created () {
+    this.loading = true
     searchResult(this.$route.query.query, 0, 1).then(res1 => {
       this.songs = res1.data.result.songs
       for (let i = 0; i < this.songs.length; i++) {
@@ -69,6 +71,7 @@ export default {
         this.songs[i].ar[0] = {}
         const name = this.songs[i].artists[0].name
         this.songs[i].ar[0].name = name
+        this.loading = false
       }
       this.songCount = res1.data.result.songCount
       this.$emit('Count', this.songCount)
