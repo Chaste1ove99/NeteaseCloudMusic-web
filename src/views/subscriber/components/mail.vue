@@ -1,9 +1,9 @@
 <template>
-    <div class="mail-container">
+    <div class="mail-container" v-loading='loading'>
         <div class="return_menu"><i class="iconfont" @click="closemenu">&#xe611;</i>返回<span class="nickname">{{profile.nickname}}</span></div>
-        <div class="text_wrap" id='wrap'>
+        <div class="text_wrap" id='wrap' ref='wrap'>
           <div v-if="more" @click="getmore" class="more_info">查看过去消息</div>
-            <div v-for="(item,index) in newmsgs" :key="index" class="text_block">
+            <div v-for="(item,index) in newmsgs" :key="index" class="text_block" :id="index">
                 <div v-if="item.fromUser.nickname === profile.nickname" class="user_msg">
                         <el-image
                         class="user_icon"
@@ -36,11 +36,14 @@ export default {
       content: '',
       more: false,
       before: 0,
-      timeout: null
+      timeout: null,
+      loading: false
     }
   },
   props: ['profile'],
-  created () {
+  mounted () {
+    // 在mounted获取数据才能操作dom
+    this.loading = true
     this.userid = this.$route.query.id
     this.newmsgs[0] = { time: '' }
     const timestamp = Date.parse(new Date())
@@ -62,21 +65,39 @@ export default {
     getoldmsg()
     // 设置定时器 每三秒执行一次防抖函数 三秒发送一次请求
     window.setInterval(() => this.debounce(this.getMsg(0), 3000), 3000)
+    this.$nextTick(() => {
+      const wrap = this.$refs.wrap
+      console.log(wrap.scrollHeight)
+      // 这里获取到scrollHeight为390 其实是容器的高
+      // 对比发现这里的v-for dom其实没渲染 缺少解决办法
+      // 目前的方法是通过loading过渡 避免视觉上的瑕疵
+      function endloading () {
+        wrap.scrollBy(0, 999)
+        _this.loading = false
+      }
+      setTimeout(() => endloading(), 300)
+    })
   },
   methods: {
     sendmsg (msg) {
       this.timeout = null
       const timestamp = Date.parse(new Date())
+      const wrap = document.getElementById('wrap')
       const _this = this
       async function sendmail () {
         const result = await sendtext(_this.userid, timestamp, msg)
-        console.log(result)
-        // 因为借口高频BUG暂时没法继续开发
+        // console.log(result)
+        // 视觉上存在一点BUG 发送消息后默认数据被隐藏
+        _this.newmsgs.push(result.data.newMsgs[0])
+        // 由于vue异步更新dom 等待dom更新后再下拉到底
+        _this.$nextTick(() => {
+          wrap.scrollBy(0, 9999)
+          // console.log(wrap.scrollHeight)
+        })
         // 这里的思路是将发送的信息元素直接添加到数组中 并且添加返回数据中相应的时间戳
       }
       try {
         sendmail()
-        this.getMsg(0)
       } catch (error) {
         this.$message(error)
       }
@@ -86,6 +107,7 @@ export default {
       this.timeout = null
       const timestamp = Date.parse(new Date())
       const _this = this
+      const wrap = document.getElementById('wrap')
       async function getoldmsg () {
         const result = await getPrivateHistory(_this.userid, e, timestamp)
         const lengthA = result.data.msgs.length
@@ -98,15 +120,22 @@ export default {
           // console.log(index)
           if (index === -1) {
             _this.newmsgs = _this.newmsgs.concat(result.data.msgs)
+            // slice方法限制 分两种情况
           } else if (index === lengthA - 2) {
             // const message = result.data.msgs.slice(index + 1, lengthA).push(result.data.msgs[lengthA])
             // console.log(message)
             _this.newmsgs.push(result.data.msgs[lengthA - 1])
+            _this.$nextTick(() => {
+              wrap.scrollBy(0, 9999)
+            })
             // console.log(_this.newmsgs)
           } else {
             const message = result.data.msgs.slice(index + 1, lengthA - 1)
             message.push(result.data.msgs[lengthA - 1])
             _this.newmsgs = _this.newmsgs.concat(message)
+            _this.$nextTick(() => {
+              wrap.scrollBy(0, 9999)
+            })
           }
           // _this.newmsgs = _this.newmsgs.concat(result.data.msgs)
         }
