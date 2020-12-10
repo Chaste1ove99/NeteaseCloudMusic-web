@@ -62,12 +62,13 @@ export default {
     debounce (fn, wait) { // 节流方法
       var timeout = null // 初始化定时器
       // 本质是闭包
+      // 作用是在闭包内保存了外部变量timeout不会被销毁
       return function () {
         if (timeout !== null) {
           clearTimeout(timeout)
         }
         // 如果scroll方法反复触发，则清空定时器
-        timeout = setTimeout(fn, wait)
+        timeout = setTimeout(fn(), wait)
         // 如果方法没有反复触发，那么就调用我们判断滚动的方法，然后去调用数据，他就只会请求一次了
       }
     },

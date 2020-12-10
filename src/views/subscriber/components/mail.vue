@@ -38,7 +38,8 @@ export default {
       more: false,
       before: 0,
       loading: false,
-      n: 0
+      n: 0,
+      time: null
     }
   },
   props: ['profile'],
@@ -70,7 +71,7 @@ export default {
     }
     getoldmsg()
     // 设置定时器 每三秒执行一次防抖函数 三秒发送一次请求
-    window.setInterval(() => this.debounce(this.getMsg(0), 3000), 3000)
+    this.time = setInterval(() => this.getMsg(0), 2000)
     this.$nextTick(() => {
       const wrap = this.$refs.wrap
       // console.log(wrap.scrollHeight)
@@ -86,7 +87,7 @@ export default {
   },
   methods: {
     sendmsg (msg) {
-      this.debounce(this.getMsg(0), 3000)
+      clearInterval(this.time)
       const timestamp = Date.parse(new Date())
       const wrap = document.getElementById('wrap')
       const _this = this
@@ -106,6 +107,7 @@ export default {
           wrap.scrollBy(0, 9999)
           // console.log(wrap.scrollHeight)
         })
+        _this.time = setInterval(() => _this.getMsg(0), 2000)
         // 这里的思路是将发送的信息元素直接添加到数组中 并且添加返回数据中相应的时间戳
       }
       try {
@@ -123,6 +125,7 @@ export default {
         const result = await getPrivateHistory(_this.userid, e, timestamp)
         const lengthA = result.data.msgs.length
         const lengthB = _this.newmsgs.length
+        console.log('12')
         // 如果聊天记录为空
         if (result.data.msgs.length > 0) {
         // reverse会改变原数组,所以这里reverse一次就可以 每次循环都只reverse一次
@@ -167,18 +170,8 @@ export default {
     closemenu () {
       this.$emit('foldmenu', 0)
     },
-    // 防抖
-    debounce (fn, wait) {
-      var timeout = null
-      return function () {
-        if (this.timeout !== null) {
-          clearTimeout(timeout)
-        }
-        timeout = setTimeout(fn, wait)
-      }
-    },
     getmore () {
-      this.debounce(this.getMsg(0), 3000)
+      clearInterval(this.time)
       const timestamp = Date.parse(new Date())
       const _this = this
       async function getoldmsg () {
@@ -189,6 +182,7 @@ export default {
         // 肯定是获取新数据 没必要判断
         _this.newmsgs = result.data.msgs.reverse().concat(_this.newmsgs)
         _this.more = result.data.more
+        _this.time = setInterval(() => _this.getMsg(0), 2000)
       }
       try {
         getoldmsg()
