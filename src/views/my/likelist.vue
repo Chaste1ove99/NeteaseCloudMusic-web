@@ -32,13 +32,6 @@
   <el-menu-item index="1" class="top-bar" @click="toggletoList">歌曲列表</el-menu-item>
 <el-menu-item index="2" class="top-bar" @click="toggletoComment">评论</el-menu-item>
 <el-menu-item index="3" class="top-bar" @click='toggletoCollect'>最近的收藏者</el-menu-item>
-<div class="search-bar">
-<el-autocomplete
-  v-model="state"
-  :fetch-suggestions="querySearchAsync"
-  placeholder="在当前歌单内搜索"
-  @select="handleSelect"
-></el-autocomplete><el-button icon="el-icon-search" circle></el-button></div>
 </el-menu>
 <div class="tabs" ref="song-desk">
   <div class="songtabs">
@@ -389,14 +382,6 @@ export default {
     position: absolute;
     margin-left: -235px;
     width: 800px;
-  }
-  .search-bar {
-  float: right;
-  width: 250px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0px 25px 0 0;
   }
   .tabs {
     font-size: 14px;

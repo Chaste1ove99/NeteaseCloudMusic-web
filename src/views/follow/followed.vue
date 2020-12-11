@@ -35,7 +35,7 @@ export default {
   },
   mounted () {
     // 作防抖 dom操作要在这里进行
-    window.addEventListener('scroll', this.debounce(this.handleScroll, 500))
+    window.addEventListener('scroll', this.debounce(this.handleScroll, 10000))
   },
   methods: {
     intouser (item) {
@@ -68,7 +68,7 @@ export default {
           clearTimeout(timeout)
         }
         // 如果scroll方法反复触发，则清空定时器
-        timeout = setTimeout(fn(), wait)
+        timeout = setTimeout(fn, wait)
         // 如果方法没有反复触发，那么就调用我们判断滚动的方法，然后去调用数据，他就只会请求一次了
       }
     },

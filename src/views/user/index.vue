@@ -12,13 +12,33 @@
       </div>
       <div class="personal-bar">
           <div class="state"><div class="state-name">动态</div><div class="state-name">{{events.length}}</div></div>
-          <div class="state"><div class="state-name">关注</div><div class="state-name">{{follows.length}}</div></div>
-          <div class="state3"><div class="state-name">粉丝</div><div class="state-name">{{followeds.length}}</div></div>
+          <div class="state"><div class="state-name" @click="intofollows">关注</div><div class="state-name">{{follows.length}}</div></div>
+          <div class="state3"><div class="state-name" @click="intofollowed">粉丝</div><div class="state-name">{{followeds.length}}</div></div>
       </div>
-      <div class="message-bar"><div class="message">我的消息</div></div>
+      <div class="message-bar"><div class="message" @click="intomail">我的消息</div></div>
       <div class="message-bar"><div class="message">我的会员</div></div>
       <div class="setting-list">
-          <div class="setting-bar"><div class="message">音质选择</div></div>
+          <div class="setting-bar"><div class="message" @click="dialogVisible = true">音质选择</div>
+          <el-dialog
+  title="音质选择"
+  :visible.sync="dialogVisible"
+  width="30%"
+  append-to-body='true'>
+  <el-form :model="form">
+    <el-form-item>
+    <el-radio-group v-model="form.br">
+      <el-radio label="最高" style="display: block"></el-radio>
+      <el-radio label="128k" style="display: block"></el-radio>
+      <el-radio label="320k" style="display: block"></el-radio>
+    </el-radio-group>
+  </el-form-item>
+      </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="changebr()">确 定</el-button>
+  </span>
+</el-dialog>
+</div>
           <div class="setting-bar"><div class="message" @click="clear">清除缓存</div></div>
           <div class="setting-bar"><div class="message" @click="Version">关于版本</div></div>
           <div class="exit-bar"><div class="exit">退出登录</div></div>
@@ -35,10 +55,16 @@ export default {
       followeds: [],
       events: [],
       nickname: '',
-      userImg: ''
+      userImg: '',
+      userId: 0,
+      dialogVisible: false,
+      form: { br: '320k' },
+      br: 320000
     }
   },
   created () {
+    const timestamp = Date.parse(new Date())
+    this.userId = window.localStorage.getItem('userID')
     getSubCount().then(res => {
       console.log(res)
     })
@@ -47,10 +73,10 @@ export default {
       this.nickname = res.data.profile.nickname
       this.userImg = res.data.profile.avatarUrl
     })
-    getFollows(localStorage.getItem('userID')).then(res => {
+    getFollows(localStorage.getItem('userID'), timestamp).then(res => {
       this.follows = res.data.follow
     })
-    getFolloweds(localStorage.getItem('userID')).then(res => {
+    getFolloweds(localStorage.getItem('userID'), timestamp).then(res => {
       this.followeds = res.data.followeds
     })
     getEvent(localStorage.getItem('userID')).then(res => {
@@ -58,8 +84,11 @@ export default {
     })
   },
   methods: {
+    intomail () {
+      this.$router.push('/app/mail')
+    },
     Version () {
-      alert('当前版本号1.0,页面基于VUE 2.0和Element UI搭建,WEB制作者@https://gitee.com/Chastelove,目前存在BUG较多,详情在src列表功能日志当中')
+      alert('当前版本号1.31,页面基于VUE 2.0和Element UI搭建,WEB制作者@https://gitee.com/Chastelove,目前存在BUG较多')
     },
     clear () {
       alert('您已清空所有缓存数据 等待页面刷新')
@@ -69,6 +98,27 @@ export default {
       window.localStorage.removeItem('user')
       window.localStorage.removeItem('intoPlaying')
       this.$router.push('/mobileLogin')
+    },
+    intofollows () {
+      this.$router.push('/app/follow?id=' + this.userId)
+    },
+    intofollowed () {
+      this.$router.push('/app/followed?id=' + this.userId)
+    },
+    // 改变音质
+    changebr () {
+      this.dialogVisible = false
+      switch (this.form.br) {
+        case '320k':
+          this.br = 320000
+          break
+        case '128k':
+          this.br = 128000
+          break
+        case '最高':
+          this.br = 990000
+      }
+      this.$store.commit('changeBr', this.br)
     }
   }
 }
@@ -116,6 +166,14 @@ export default {
 }
 .state-name {
     text-align: center;
+}
+.state:hover {
+  cursor: pointer;
+  opacity: 65%;
+}
+.state3:hover{
+  cursor: pointer;
+  opacity: 65%;
 }
 .state3 {
     padding-top: 10px;

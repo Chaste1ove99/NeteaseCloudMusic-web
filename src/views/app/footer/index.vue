@@ -225,12 +225,15 @@ export default {
     },
     playingList: function () {
       return this.$store.state.playingList
+    },
+    br: function () {
+      return this.$store.state.br
     }
   },
   watch: {
     // 监听playing 以获取url等属性
     playing (e) {
-      getSongUrl(e.id).then(res1 => {
+      getSongUrl(e.id, this.br).then(res1 => {
         const url = res1.data.data[0].url
         if (url == null) {
           // 未付费时会终止音乐

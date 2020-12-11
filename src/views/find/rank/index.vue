@@ -1,5 +1,5 @@
 <template>
-    <div class="rank-container">
+    <div class="rank-container" v-loading='loading'>
       <div class="official-container">
       <div class="head">云音乐官方榜</div>
   <div><div class="percent-rank" v-for="(item, index) in officialList" :key='index'>
@@ -41,10 +41,12 @@ export default {
       topList: [],
       playlist1: {},
       list2: { coverImgUrl: '', name: '', index: 0, id: 0 },
-      playlist2: {}
+      playlist2: {},
+      loading: false
     }
   },
   created () {
+    this.loading = true
     getTopList().then(res => {
       this.topList = res.data.list
       // 异步请求 ！！！！！！！
@@ -85,6 +87,7 @@ export default {
           // 重新排序 确保加载顺序正确
           this.globalList.sort(this.compare('index'))
           this.list2 = { coverImgUrl: '', name: '', top1: '', top2: '', top3: '', index: 0, id: 0 }
+          this.loading = false
         })
       }
     })

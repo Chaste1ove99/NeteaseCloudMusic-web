@@ -126,3 +126,18 @@ export const personalFm = () => {
     url: '/personal_fm'
   })
 }
+
+/**
+ * 获取私信通知
+ */
+export const getmsgprivate = (page, timestamp) => {
+  return request({
+    method: 'GET',
+    url: '/msg/private',
+    params: {
+      limit: 8,
+      offset: (page) * 8,
+      timestamp
+    }
+  })
+}

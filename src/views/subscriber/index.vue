@@ -64,14 +64,13 @@
                   <div class="list_item">举报</div>
               </div>
               <div class="subscriber_mail" v-if="mailcode">
-                  <mail :profile='profile' @foldmenu='foldmenu'></mail>
+                  <router-view :profile='profile' @foldmenu='foldmenu'></router-view>
               </div>
     </div>
 </template>
 <script>
 import { userPlayList } from '@/api/user.js'
 import { getuserdetail, followUser } from '@/api/subscriber.js'
-import mail from './components/mail'
 export default {
   name: 'subscriberIndex',
   data () {
@@ -86,7 +85,6 @@ export default {
       loading: false
     }
   },
-  components: { mail },
   created () {
     this.loading = true
     this.userid = this.$route.query.id

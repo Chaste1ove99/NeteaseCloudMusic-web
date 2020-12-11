@@ -1,5 +1,5 @@
 <template>
-  <div class="recommond-page">
+  <div class="recommond-page" v-loading='loading'>
       <div class='header'>推荐歌单</div>
       <div class="list-block">
   <div class="songlist" v-for="(item, index) in list" :key="index" @click="intolist(item)">
@@ -16,6 +16,7 @@
       <el-image
       class="image"
       :src="content[index].picUrl"
+       @click="intomv(item.id)"
       fit="fill"></el-image>
        <div class="decoration content-name">{{ content[index].name }}</div>
   </div>
@@ -24,6 +25,7 @@
   <div class="mv-list" v-for="(item, index) in mv" :key="index">
       <el-image
       class="image"
+      @click="intomv(item.id)"
       :src="mv[index].picUrl"
       fit="fill"></el-image>
        <span class="mv-name artfont2">{{ mv[index].name }}</span>
@@ -55,10 +57,12 @@ export default {
       content: [],
       mv: [],
       channel: [],
-      newRoutes: []
+      newRoutes: [],
+      loading: false
     }
   },
   created () {
+    this.loading = true
     getRecommondList().then(res => {
       this.list = res.data.result
     })
@@ -71,17 +75,25 @@ export default {
     getRecommondChannel().then(res => {
       // console.log(res)
       this.channel = res.data.result
+      this.loading = false
     })
   },
   methods: {
     intolist (item) {
       this.$router.push('/app/list?id=' + item.id)
       this.$store.commit('getListID', item.id)
+    },
+    intomv (id) {
+      this.$router.push('/app/mvplayer?id=' + id)
     }
   }
 }
 </script>
 <style scoped>
+.image:hover {
+  cursor: pointer;
+  opacity: 65%;
+}
 .recommond-page {
   margin-left: 10px;
   padding-bottom: 15%;

@@ -3,13 +3,13 @@ import request from '@/utils/request.js'
 /**
  * 获取音乐url 可选参数br 最大999000
  */
-export const getSongUrl = id => {
+export const getSongUrl = (id, br) => {
   return request({
     method: 'GET',
     url: '/song/url',
     params: {
       id,
-      br: 320000
+      br
     }
   })
 }

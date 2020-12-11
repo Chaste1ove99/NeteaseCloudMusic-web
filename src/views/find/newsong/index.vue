@@ -1,5 +1,5 @@
 <template>
-    <div class="newSong-container">
+    <div class="newSong-container" v-loading='loading'>
       <div class="top-bar">
       <el-button-group>
   <el-button type="danger" icon="el-icon-arrow-left" size="small" @click="toNewSong">新歌速递</el-button>
@@ -19,10 +19,10 @@
             </div>
             <div>
               <div class="top-nav">
-                <el-button icon="el-icon-caret-right" class="play-btn">播放全部</el-button>
+                <el-button icon="el-icon-caret-right" class="play-btn" @click="playall">播放全部</el-button>
               </div>
               <div class="top100-block">
-                <div v-for="(item, index) in top100" :key="index" class="single-block">
+                <div v-for="(item, index) in top100" :key="index" class="single-block" @click="play(item)">
                   <div class="num">{{index + 1}}</div>
                   <div class="song-title">
                   <div class="song-name">{{item.information}}</div>
@@ -41,6 +41,7 @@
                <el-image
       style="width: 200px; height: 200px"
       :src="item.picUrl"
+      @click="intoalbum(item)"
       fit="fill"></el-image>
       <div class="name-size">{{item.name}}</div>
       <div class="artist-size">{{item.artists[0].name}}</div>
@@ -57,10 +58,24 @@ export default {
   data () {
     return {
       weekData: [],
-      top100: []
+      top100: [],
+      loading: false
     }
   },
   methods: {
+    intoalbum (item) {
+      this.$router.push('/app/album?id=' + item.id)
+    },
+    // 全部播放
+    playall () {
+      this.$store.commit('intoplaying', this.top100[0])
+      this.$store.commit('publishList', this.top100)
+    },
+    // 播放单首
+    play (item) {
+      this.$store.commit('intoplaying', item)
+      this.$store.commit('publishList', this.top100)
+    },
     toNewSong () {
       this.$refs['new-music'].classList.add('view')
       this.$refs['new-music'].classList.remove('no-view')
@@ -68,6 +83,11 @@ export default {
       this.$refs['new-album'].classList.remove('view')
     },
     toNewAlbum () {
+      this.loading = true
+      getTopAlbum(0).then(res => {
+        this.weekData = res.data.weekData
+        this.loading = false
+      })
       this.$refs['new-music'].classList.add('no-view')
       this.$refs['new-music'].classList.remove('view')
       this.$refs['new-album'].classList.remove('no-view')
@@ -79,6 +99,11 @@ export default {
         for (let i = 0; i < this.top100.length; i++) {
           this.top100[i].artistCount = ''
           this.top100[i].information = ''
+          this.top100[i].order = i
+          this.top100[i].al = {}
+          this.top100[i].ar = []
+          this.top100[i].ar.push(this.top100[i].artists[0])
+          this.top100[i].al.picUrl = this.top100[i].album.picUrl
           if (this.top100[i].alias.length > 0) {
             this.top100[i].information = this.top100[i].name + '(' + this.top100[i].alias[0] + ')'
           } else {
@@ -96,14 +121,17 @@ export default {
     }
   },
   created () {
-    getTopAlbum(0).then(res => {
-      this.weekData = res.data.weekData
-    })
+    this.loading = true
     getTopSong(0).then(res => {
       this.top100 = res.data.data
       for (let i = 0; i < this.top100.length; i++) {
         this.top100[i].artistCount = ''
         this.top100[i].information = ''
+        this.top100[i].order = i
+        this.top100[i].al = {}
+        this.top100[i].ar = []
+        this.top100[i].ar.push(this.top100[i].artists[0])
+        this.top100[i].al.picUrl = this.top100[i].album.picUrl
         if (this.top100[i].alias.length > 0) {
           this.top100[i].information = this.top100[i].name + '(' + this.top100[i].alias[0] + ')'
         } else {
@@ -115,6 +143,7 @@ export default {
           }
           this.top100[i].artistCount += this.top100[i].artists[j].name
           this.top100[i].detail = this.top100[i].artistCount + ' - ' + this.top100[i].album.name
+          this.loading = false
         }
       }
     })
@@ -193,6 +222,10 @@ export default {
   border-top: none;
   width: 499px;
   overflow: hidden;
+}
+.single-block {
+  cursor: pointer;
+  opacity: 65%;
 }
 .num {
   display: inline-block;

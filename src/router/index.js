@@ -43,6 +43,10 @@ import videoplayer from '../views/videoplayer/index.vue'
 import subscriber from '../views/subscriber/index.vue'
 import follow from '../views/follow/follow.vue'
 import followed from '../views/follow/followed.vue'
+import mail from '../views/mail/index.vue'
+import usermsg from '../views/mail/component/msg.vue'
+import mailplug from '../views/subscriber/components/mail.vue'
+import maildetail from '../views/mail/component/plug/index.vue'
 
 Vue.use(Router)
 const originalPush = Router.prototype.push
@@ -177,6 +181,18 @@ const routes = [
       component: ListDetail
     },
     {
+      path: '/app/mail',
+      component: mail,
+      children: [{
+        path: '',
+        component: usermsg
+      }]
+    },
+    {
+      path: '/app/mail/detail',
+      component: maildetail
+    },
+    {
       path: '/app/album',
       component: album,
       children: [{
@@ -194,7 +210,11 @@ const routes = [
     },
     {
       path: '/app/subscriber',
-      component: subscriber
+      component: subscriber,
+      children: [{
+        path: '',
+        component: mailplug
+      }]
     },
     {
       path: '/app/result',

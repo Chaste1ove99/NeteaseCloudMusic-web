@@ -1,5 +1,5 @@
 <template>
-    <div class='songlist'>
+    <div class='songlist' v-loading='loading'>
         <div class='header'>精选歌单</div>
             <div class="choose"><el-button type="text" class="btn" @click="changetag('华语')">华语</el-button><el-button type="text" class="btn" @click="changetag('华语')">流行</el-button>
             <el-button type="text" class="btn" @click="changetag('摇滚')">摇滚</el-button><el-button type="text" class="btn" @click="changetag('民谣')">民谣</el-button>
@@ -103,13 +103,16 @@ export default {
       size: 48,
       str: '',
       currentPage: 1,
-      dialogVisible: false
+      dialogVisible: false,
+      loading: false
     }
   },
   created () {
+    this.loading = true
     getAllList(0).then(res => {
       this.playlist = res.data.playlists
       this.Sum = res.data.total
+      this.loading = false
       // console.log(res)
     })
     getCatList().then(res => {
@@ -126,11 +129,13 @@ export default {
     },
     changetag (str) {
       this.str = str
+      this.loading = true
       getAllList(0, str).then(res => {
         this.playlist = res.data.playlists
         this.Sum = res.data.total
         this.currentPage = 1
         this.dialogVisible = false
+        this.loading = false
       })
     },
     intolist (cate) {
