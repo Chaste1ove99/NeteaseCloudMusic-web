@@ -1,24 +1,28 @@
 # desktopweb2
 
-## Project setup
+## 基于Node地址
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+https://github.com/Binaryify/NeteaseCloudMusicApi
 ```
 
-### Compiles and minifies for production
+### 运行前你要做的
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+运行上面地址的node 并且执行npm install
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 功能特性
+```
+- 强大的流媒体播放器
+- 私信功能稳定的防抖设置 低延迟的即时聊天效果
+- 交互逻辑偏向iPad客户端 更符合现代人的审美
+- 几乎网页端网易云音乐大部分能做的事情
+```
+
+### 缺少的核心功能
+```
+- 专辑付费请到官方购买
+- 电台功能暂未开发 动态功能web端体验很差
+- 播放器和歌单内部红心功能
+```
+
+### 这个web程序仅供学习使用 不作任何商业用途
