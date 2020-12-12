@@ -17,7 +17,7 @@
       fit="fill"></el-image><div class="creator-name">{{listdetails.creator.nickname}}  {{localTime}} 创建</div>
 </div></div>
 <div class="btn"><el-row>
-  <el-button icon="el-icon-caret-right" round>播放全部</el-button>
+  <el-button icon="el-icon-caret-right" @click='playall' round>播放全部</el-button>
   <el-button icon="el-icon-folder-add"   round size="small">收藏</el-button>
   <el-button round icon='el-icon-top' size="small">分享</el-button>
   <el-button round  icon='el-icon-bottom' size="small">下载全部</el-button>
@@ -165,6 +165,9 @@ export default {
         }).then(res1 => {
           // console.log(res1)
           this.songs = res1.data.songs
+          for (let i = 0; i < this.songs.length; i++) {
+            this.songs[i].order = i
+          }
         })
         // 获取歌单评论
         getListComment(this.$route.query.id, 0, timestamp).then(res => {
@@ -257,12 +260,13 @@ export default {
         }
       })
     },
+    playall () {
+      this.$store.commit('intoplaying', this.songs[0])
+      this.$store.commit('publishList', this.songs)
+    },
     // 双击获取音乐url并且播放功能
     playSong (item) {
       if (this.playing === null) {
-        for (let i = 0; i < this.listdetails.tracks; i++) {
-          this.listdetails.tracks[i].index = i
-        }
         this.$store.commit('intoplaying', item)
         // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
         // 当页面刷新后保证上次播放的音乐不丢失

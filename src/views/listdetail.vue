@@ -18,7 +18,7 @@
       fit="fill"></el-image><div class="creator-name">{{listdetails.creator.nickname}}  {{localTime}} 创建</div>
 </div></div>
 <div class="btn"><el-row>
-  <el-button icon="el-icon-caret-right" round>播放全部</el-button>
+  <el-button icon="el-icon-caret-right" round @click='playall'>播放全部</el-button>
   <el-button icon="el-icon-folder-add"   round size="small">收藏</el-button>
   <el-button round icon='el-icon-top' size="small">分享</el-button>
   <el-button round  icon='el-icon-bottom' size="small">下载全部</el-button>
@@ -174,6 +174,9 @@ export default {
           const result = await getallsongs(idString)
           console.log(result.data.songs)
           _this.songs = result.data.songs
+          for (let i = 0; i < _this.songs.length; i++) {
+            _this.songs[i].order = i
+          }
           _this.loading = false
         }
         getlist()
@@ -196,6 +199,10 @@ export default {
     }
   },
   methods: {
+    playall () {
+      this.$store.commit('intoplaying', this.songs[0])
+      this.$store.commit('publishList', this.songs)
+    },
     getcomment () {
       const timestamp = Date.parse(new Date())
       getListComment(this.$route.query.id, 0, timestamp).then(res => {
@@ -355,15 +362,12 @@ export default {
     playSong (item) {
       // 第一次播放
       if (this.playing === null) {
-        for (let i = 0; i < this.listdetails.tracks; i++) {
-          this.listdetails.tracks[i].index = i
-        }
         this.$store.commit('intoplaying', item)
         // 为了防止刷新后丢失的情况 这里将最后一次的数据存到本地储存中
         // 当页面刷新后保证上次播放的音乐不丢失
         window.localStorage.setItem('intoPlaying', JSON.stringify(item))
         // 应该把歌单传到footer组件中
-        this.$store.commit('publishList', this.listdetails.tracks)
+        this.$store.commit('publishList', this.songs)
       } else if (item.id === this.playing.id) {
         return false
       } else {
@@ -380,7 +384,7 @@ export default {
         // 当页面刷新后保证上次播放的音乐不丢失
         window.localStorage.setItem('intoPlaying', JSON.stringify(item))
         // 应该把歌单传到footer组件中
-        this.$store.commit('publishList', this.listdetails.tracks)
+        this.$store.commit('publishList', this.songs)
       }
     }
   },

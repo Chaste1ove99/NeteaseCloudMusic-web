@@ -35,7 +35,7 @@ export default {
   },
   mounted () {
     // 作防抖 dom操作要在这里进行
-    window.addEventListener('scroll', this.debounce(this.handleScroll, 10000))
+    window.addEventListener('scroll', this.debounce(this.handleScroll, 3000))
   },
   methods: {
     intouser (item) {

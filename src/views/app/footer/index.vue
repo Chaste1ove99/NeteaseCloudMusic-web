@@ -22,6 +22,14 @@
       <div class="tool-btn liked" v-if="mode === 2"><i class="iconfont btn" @click="changeMode()">&#xe601;</i></div>
       <div class="tool-btn liked" v-if="mode === 3"><i class="iconfont btn" @click="changeMode()">&#xe604;</i></div>
       </div>
+      <div class="list_wrap">
+        <div class="vol_menu">
+         <div class="vol_btn liked"><i class="iconfont btn">&#xe626;</i></div>
+          <div class="vol_control">
+ <el-slider v-model="vol" @input='changevol'></el-slider>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
 </template>
@@ -45,7 +53,8 @@ export default {
       userID: 0,
       ids: [],
       liked: false,
-      mode: 1
+      mode: 1,
+      vol: 50
     }
   },
   created () {
@@ -58,7 +67,15 @@ export default {
       console.log(this.ids)
     })
   },
+  mounted () {
+    this.$nextTick(() => {
+      this.$refs.audioA.volume = 0.5
+    })
+  },
   methods: {
+    changevol (e) {
+      this.$refs.audioA.volume = e / 100
+    },
     // 将资源分为100份 并赋值给进度条的两个属性
     changeCurrentTime (index) {
       // 进度条的一份进度
@@ -209,8 +226,6 @@ export default {
       }
     }
   },
-  mounted () {
-  },
   computed: {
     // 监听vuex中playing的变化 便于及时获取新要播放的歌曲
     playing: function () {
@@ -263,7 +278,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
 .player {
   background: #fff;
   margin-left: 10px;
@@ -322,5 +337,27 @@ export default {
 }
 .liked{
   color: red;
+}
+.list_wrap{
+  float: right;
+  margin-right: 200px;
+  position: relative;
+  position: relative;
+  .vol_menu{
+    display: flex;
+    width: 150px;
+    padding-top: 25px;
+    vertical-align: top;
+  .vol_btn{
+    flex: 1;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+  }
+  .vol_control{
+    flex: 4;
+    vertical-align: top;
+  }
+  }
 }
 </style>
