@@ -131,3 +131,16 @@ export const getallsongs = ids => {
     }
   })
 }
+
+/**
+ * 获取歌词
+ */
+export const getlyrics = id => {
+  return request({
+    method: 'GET',
+    url: '/lyric',
+    params: {
+      id
+    }
+  })
+}

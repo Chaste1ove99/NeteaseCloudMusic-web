@@ -47,7 +47,6 @@ import mail from '../views/mail/index.vue'
 import usermsg from '../views/mail/component/msg.vue'
 import mailplug from '../views/subscriber/components/mail.vue'
 import maildetail from '../views/mail/component/plug/index.vue'
-
 Vue.use(Router)
 const originalPush = Router.prototype.push
 Router.prototype.push = function push (location) {

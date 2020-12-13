@@ -1,6 +1,6 @@
 <template>
     <div class="player">
-      <el-slider v-model="sliderTime" @change="changeCurrentTime" class="slider" :format-tooltip="formatTooltip" :step="step"></el-slider>
+      <el-slider v-model="sliderTime" @change="changeCurrentTime" class="slider" :format-tooltip="formatTooltip"></el-slider>
       <div class="playing-container">
         <audio :src="playing.musicurl" ref="audioA" autoplay=“true” @loadedmetadata='loaded' @timeupdate='updateSlider' @ended="ended"></audio>
       <!--这里判断空对象的方法 详情csdn https://blog.csdn.net/qq_18671415/article/details/105014700-->
@@ -29,12 +29,34 @@
  <el-slider v-model="vol" @input='changevol'></el-slider>
           </div>
         </div>
+        <div class="list_menu">
+          <div class="list_btn liked"><i class="iconfont" @click="openlist">&#xe60b;</i></div>
+        </div>
       </div>
       </div>
+      <div v-show="show" class="list_page">
+            <div class="list_warp">
+        <div class="playlist_wrap">
+            <div class="list_title">播放列表</div>
+            <div class="list_block">
+                <div v-for="(item,index) in playingList" :key="index" class="song_wrap" @dblclick="playsong(item)">
+                    <div class="song_name">{{item.name}}</div>
+                    <div class="song_singer">{{item.ar[0].name}}</div>
+                </div>
+            </div>
+            </div>
+       <div class="lyrics_wrap">
+           <div class="lyrics_title">{{playing.name}}</div>
+           <div class="lyrics_block">
+             <div v-for="(item,index) in lyric" :key="index" class="single_lys" :id="item.time">{{item.lys}}</div>
+           </div>
+           </div>
+      </div>
+    </div>
     </div>
 </template>
 <script>
-import { getSongUrl } from '@/api/song.js'
+import { getSongUrl, getlyrics } from '@/api/song.js'
 import { getlikelist, toggerlike } from '@/api/user.js'
 export default {
   name: 'FootPlayer',
@@ -54,7 +76,9 @@ export default {
       ids: [],
       liked: false,
       mode: 1,
-      vol: 50
+      vol: 50,
+      show: false,
+      lyric: []
     }
   },
   created () {
@@ -64,7 +88,7 @@ export default {
     this.$store.commit('intoplaying', this.played)
     getlikelist(this.userID, timestamp).then(res => {
       this.ids = res.data.ids
-      console.log(this.ids)
+      // console.log(this.ids)
     })
   },
   mounted () {
@@ -73,6 +97,12 @@ export default {
     })
   },
   methods: {
+    playsong (item) {
+      this.$store.commit('intoplaying', item)
+    },
+    openlist () {
+      this.show = !this.show
+    },
     changevol (e) {
       this.$refs.audioA.volume = e / 100
     },
@@ -103,6 +133,7 @@ export default {
     loaded (res) {
       this.status = 1
       this.audio.maxTime = parseInt(res.target.duration)
+      window.setInterval(() => this.con(), 1000)
       // console.log(this.audio.maxTime)
     },
     // 播放下一首
@@ -224,6 +255,22 @@ export default {
       } else {
         this.mode = 1
       }
+    },
+    // 操作dom动画 可以添加防抖等功能
+    con () {
+      const domID = Math.round(this.$refs.audioA.currentTime)
+      const dom = document.getElementById(domID)
+      if (dom) {
+        dom.classList.add('playing')
+        dom.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+        // 上个元素移除
+        dom.previousElementSibling.classList.remove('playing')
+      } else {
+        return false
+      }
     }
   },
   computed: {
@@ -274,6 +321,22 @@ export default {
         }
         return e
       })
+      getlyrics(e.id).then(res => {
+        this.lyric = []
+        const lyric = res.data.lrc.lyric
+        const single = lyric.split('\n')
+        let ly = { lys: '', time: '' }
+        for (let i = 0; i < single.length; i++) {
+          const time = single[i].slice(2, 6)
+          const min = time.split('')[0]
+          const sec = time.split('')[2] + time.split('')[3]
+          ly.time = parseInt(min) * 60 + parseInt(sec)
+          ly.lys = single[i].slice(11, 999)
+          this.lyric.push(ly)
+          ly = { lys: '', time: '' }
+        }
+        // const reg = '/^[[0-9a-zA-Z_]*]/'
+      })
     }
   }
 }
@@ -282,6 +345,7 @@ export default {
 .player {
   background: #fff;
   margin-left: 10px;
+  position: relative;
 }
 .pic {
   width: 100px;
@@ -342,22 +406,119 @@ export default {
   float: right;
   margin-right: 200px;
   position: relative;
-  position: relative;
   .vol_menu{
-    display: flex;
+    display: inline-block;
     width: 150px;
     padding-top: 25px;
     vertical-align: top;
   .vol_btn{
-    flex: 1;
+    width: 20px;
     padding-right: 10px;
-    display: flex;
-    align-items: center;
+    display: inline-block;
+    padding-top: 5px;
   }
   .vol_control{
-    flex: 4;
+    width: 100px;
+    display: inline-block;
     vertical-align: top;
   }
   }
+  .list_menu{
+    display: inline-block;
+    width: 150px;
+    padding-top: 25px;
+    vertical-align: top;
+    padding-left: 20px;
+    .list_btn{
+        width: 20px;
+        padding-top: 5px;
+    }
+    .list_btn:hover{
+      cursor: pointer;
+    }
+  }
+}
+.list_page{
+  position: absolute;
+  top: -250px;
+  left: 250px;
+    background-color:#fff;
+    width: 900px;
+    height: 250px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+     .playlist_wrap{
+        display: inline-block;
+        width: 500px;
+        padding-left: 5px;
+        .list_title{
+            padding-left: 5px;
+            padding-top: 10px;
+        }
+        .list_block{
+            overflow: scroll;
+            height: 220px;
+            padding-left: 5px;
+            .song_wrap{
+                padding-top: 3px;
+                font-size: 15px;
+                display: flex;
+                .song_name{
+                    flex: 7;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+                .song_singer{
+                    flex: 2;
+                    vertical-align: top;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                }
+            }
+            .song_wrap:hover{
+                opacity: 65%;
+                cursor: pointer;
+                background-color:  #ccc;
+            }
+        }
+        .list_block::-webkit-scrollbar{
+                display: none;
+            }
+    }
+    .lyrics_wrap{
+        display: inline-block;
+        width: 350px;
+        vertical-align: top;
+        border-left: 1px solid #ccc;
+        padding-left: 5px;
+        .lyrics_title{
+            padding-left: 10px;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 320px;
+            padding-top: 10px;
+        }
+        .lyrics_block{
+            height: 220px;
+            overflow: scroll;
+            font-size: 14px;
+            .single_lys{
+              text-align: center;
+              padding: 5px;
+            }
+        }
+        .lyrics_block::-webkit-scrollbar{
+            display: none;
+        }
+    }
+}
+.playing{
+  color: red;
+  font-size: 16px;
 }
 </style>

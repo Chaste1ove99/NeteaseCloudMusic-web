@@ -73,7 +73,7 @@ export default {
       }
     },
     handleScroll () {
-      const scrollTop = document.documentElement.scrollTop // 屏幕滚动高度
+      const scrollTop = document.documentElement.scrollTop
       const innerHeight = document.querySelector('#app').clientHeight // 容器高度
       const outerHeight = document.documentElement.clientHeight // 屏幕高度
       if (outerHeight + scrollTop >= innerHeight + 10) {
