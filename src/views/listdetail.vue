@@ -40,13 +40,14 @@
     <div class="singer-bar"><span class="bar-title">歌手</span></div>
     <div class="alb-bar"><span class="bar-title">专辑</span></div>
   </div>
-  <div class="songblocks">
+  <div class="songblocks" v-if="songs.length>0">
     <div v-for="(item, index) in songs" :key='index' class="song-border" @dblclick="playSong(item)">
       <span class="head-bar">{{index+1}}</span>
       <div class="song-bar">{{item.name}}</div>
     <div class="singer-bar">{{item.ar[0].name}}</div>
     <div class="alb-bar">{{item.al.name}}</div></div>
   </div>
+  <div v-else class="nosong_block">快去添加第一首歌曲吧~</div>
 </div>
 <div class="comment-tab none" ref="comment-desk">
           <div class="comment_input"><el-input
@@ -179,7 +180,12 @@ export default {
           }
           _this.loading = false
         }
-        getlist()
+        if (this.ids.length === 0) {
+          this.songs = []
+          this.loading = false
+        } else {
+          getlist()
+        }
         // 获取歌单评论
         getListComment(this.$route.query.id, 0, timestamp).then(res => {
           // console.log(res)
@@ -763,5 +769,13 @@ export default {
         }
       }
       }
+  }
+  .nosong_block {
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color:red
   }
 </style>

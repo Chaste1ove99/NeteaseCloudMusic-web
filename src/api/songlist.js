@@ -53,3 +53,29 @@ export const getListComment = (id, pageNum, timestamp) => {
     }
   })
 }
+
+/**
+ * 删除歌单
+ */
+export const deletelist = id => {
+  return request({
+    method: 'GET',
+    url: '/playlist/delete',
+    params: {
+      id
+    }
+  })
+}
+
+/**
+ * 创建歌单
+ */
+export const cretalist = name => {
+  return request({
+    method: 'get',
+    url: '/playlist/create',
+    params: {
+      name
+    }
+  })
+}

@@ -47,7 +47,7 @@
             </div>
        <div class="lyrics_wrap">
            <div class="lyrics_title">{{playing.name}}</div>
-           <div class="lyrics_block">
+           <div class="lyrics_block" id="lycBlock">
              <div v-for="(item,index) in lyric" :key="index" class="single_lys" :id="item.time">{{item.lys}}</div>
            </div>
            </div>
@@ -85,6 +85,9 @@ export default {
     const timestamp = Date.parse(new Date())
     this.userID = JSON.parse(window.localStorage.getItem('userID'))
     this.played = JSON.parse(window.localStorage.getItem('intoPlaying'))
+    const list = []
+    list.push(this.played)
+    this.$store.commit('publishList', list)
     this.$store.commit('intoplaying', this.played)
     getlikelist(this.userID, timestamp).then(res => {
       this.ids = res.data.ids
@@ -242,7 +245,7 @@ export default {
       // 重新获取一次我喜欢列表 或者用算法操作也可以
       getlikelist(this.userID, timestamp).then(res => {
         this.ids = res.data.ids
-        console.log(this.ids)
+        // console.log(this.ids)
       })
     },
     // 改变播放模式
@@ -258,18 +261,20 @@ export default {
     },
     // 操作dom动画 可以添加防抖等功能
     con () {
-      const domID = Math.round(this.$refs.audioA.currentTime)
-      const dom = document.getElementById(domID)
-      if (dom) {
-        dom.classList.add('playing')
-        dom.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        })
-        // 上个元素移除
-        dom.previousElementSibling.classList.remove('playing')
-      } else {
-        return false
+      if (this.$refs.audioA.currentTime) {
+        const domID = Math.round(this.$refs.audioA.currentTime)
+        const dom = document.getElementById(domID)
+        if (dom) {
+          dom.classList.add('playing')
+          dom.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+          // 上个元素移除
+          dom.previousElementSibling.classList.remove('playing')
+        } else {
+          return false
+        }
       }
     }
   },
@@ -307,15 +312,19 @@ export default {
         } else {
           this.diasbled = false
         }
-        for (let i = 0; i < this.ids.length; i++) {
-          if (this.ids[i] === e.id) {
+        const likeId = this.ids.findIndex(v => v === e.id)
+        switch (likeId) {
+          case -1:
+            this.liked = false
+            e.liked = false
+            break
+          default:
             e.liked = true
             this.liked = true
-          }
         }
         // console.log(res1)
         this.$set(e, 'musicurl', url)
-        if (e.album.id === 0) {
+        if (e.album.id === undefined) {
           e.al = {}
           e.al.picUrl = 'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=408198463,3915178618&fm=26&gp=0.jpg'
         }
@@ -327,16 +336,21 @@ export default {
         const single = lyric.split('\n')
         let ly = { lys: '', time: '' }
         for (let i = 0; i < single.length; i++) {
-          const time = single[i].slice(2, 6)
-          const min = time.split('')[0]
-          const sec = time.split('')[2] + time.split('')[3]
+          const time = single[i].slice(2, 12).split('')
+          const min = time[0]
+          const sec = time[2] + time[3]
+          const index = time.findIndex(v => v === ']')
           ly.time = parseInt(min) * 60 + parseInt(sec)
-          ly.lys = single[i].slice(11, 999)
+          ly.lys = single[i].slice(index + 3, 999)
           this.lyric.push(ly)
           ly = { lys: '', time: '' }
         }
         // const reg = '/^[[0-9a-zA-Z_]*]/'
       })
+      const lycBlock = document.getElementById('lycBlock')
+      for (let i = 0; i < lycBlock.children.length; i++) {
+        lycBlock.children[i].classList.remove('playing')
+      }
     }
   }
 }
@@ -403,9 +417,12 @@ export default {
   color: red;
 }
 .list_wrap{
-  float: right;
-  margin-right: 200px;
-  position: relative;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50px);
+  width: 400px;
+  margin-left: 900px;
+  padding-right: 200px;
   .vol_menu{
     display: inline-block;
     width: 150px;
@@ -445,8 +462,10 @@ export default {
     background-color:#fff;
     width: 900px;
     height: 250px;
-    border-radius: 10px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
     border: 1px solid #ccc;
+    border-bottom: none;
      .playlist_wrap{
         display: inline-block;
         width: 500px;
@@ -504,9 +523,11 @@ export default {
             padding-top: 10px;
         }
         .lyrics_block{
-            height: 220px;
+            height: 120px;
             overflow: scroll;
             font-size: 14px;
+            padding-top: 50px;
+            padding-bottom: 50px;
             .single_lys{
               text-align: center;
               padding: 5px;

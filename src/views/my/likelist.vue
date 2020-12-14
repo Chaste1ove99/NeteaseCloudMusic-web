@@ -146,7 +146,7 @@ export default {
     const timestamp = Date.parse(new Date())
     if (this.$route.query.id) {
       // console.log(this.$route.query.id)
-      getListDetail(this.$route.query.id).then(res => {
+      getListDetail(this.$route.query.id, timestamp).then(res => {
         console.log(res)
         this.listdetails = res.data.playlist
         // console.log(res)

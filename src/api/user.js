@@ -25,14 +25,15 @@ export const getlikelist = (userID, timestamp) => {
 /**
  * 获取用户歌单
  */
-export const userPlayList = (userID, page) => {
+export const userPlayList = (userID, page, timestamp) => {
   return request({
     method: 'GET',
     url: '/user/playlist',
     params: {
       uid: userID,
       limit: 999,
-      offset: (page) * 20
+      offset: (page) * 20,
+      timestamp
     }
   })
 }
@@ -55,7 +56,7 @@ export const getUserDetail = userID => {
  */
 export const toggerlike = (id, like, timestamp) => {
   return request({
-    method: 'POST',
+    method: 'GET',
     url: '/like',
     params: {
       id,
