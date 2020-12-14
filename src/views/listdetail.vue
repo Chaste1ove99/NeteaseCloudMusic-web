@@ -21,7 +21,7 @@
   <el-button icon="el-icon-caret-right" round @click='playall'>播放全部</el-button>
   <el-button icon="el-icon-folder-add"   round size="small">收藏</el-button>
   <el-button round icon='el-icon-top' size="small">分享</el-button>
-  <el-button round  icon='el-icon-bottom' size="small">下载全部</el-button>
+  <el-button round  icon='el-icon-bottom' size="small" @click="download">下载全部</el-button>
 </el-row></div>
 <div class="list-label">标 签: <div class='tag' v-for="(tag, index) in listdetails.tags" :key="index">{{tag}} </div></div>
 <div class="list-play">歌 曲: <div class="count">{{listdetails.trackCount}}</div> <div class="list-play"> 播放数: <div class="count">{{listdetails.playCount}}</div></div></div>
@@ -36,7 +36,7 @@
 <div class="tabs" ref="song-desk" v-loading='loading'>
   <div class="songtabs">
     <div class="head-bar"><span></span></div>
-    <div class="song-bar"><span class="bar-title">歌曲名称</span></div>
+    <div class="song-bar" style="padding-right: 25px"><span class="bar-title">歌曲名称</span></div>
     <div class="singer-bar"><span class="bar-title">歌手</span></div>
     <div class="alb-bar"><span class="bar-title">专辑</span></div>
   </div>
@@ -44,8 +44,11 @@
     <div v-for="(item, index) in songs" :key='index' class="song-border" @dblclick="playSong(item)">
       <span class="head-bar">{{index+1}}</span>
       <div class="song-bar">{{item.name}}</div>
+        <div class="menu_bar" @click.stop="addtolist(item)"><i class="el-icon-plus"></i>
+        </div>
     <div class="singer-bar">{{item.ar[0].name}}</div>
-    <div class="alb-bar">{{item.al.name}}</div></div>
+    <div class="alb-bar">{{item.al.name}}</div>
+        </div>
   </div>
   <div v-else class="nosong_block">快去添加第一首歌曲吧~</div>
 </div>
@@ -130,10 +133,28 @@
   </div>
         </div>
       </div>
+               <el-dialog
+               v-loading='dialogloading'
+  title="选择添加到的歌单"
+  :visible.sync="visible"
+  width="500px">
+  <div v-for="(item,index) in userlist" :key="index" class="list_wrap" @click="selectlist(item,index)" :id='index'>
+     <el-image
+     class="list_image"
+      style="width: 60px; height: 60px"
+      :src="item.coverImgUrl"
+      fit="cover"></el-image>
+      <div class="list_detail">
+        <div class="list_name">{{item.name}}</div>
+          <div class="list_num">{{item.trackCount}}首</div>
+      </div>
+  </div>
+                                    </el-dialog>
 </div>
 </template>
 <script>
-import { getListDetail, getListComment } from '@/api/songlist.js'
+import { userPlayList } from '@/api/user.js'
+import { getListDetail, getListComment, handlesonglist } from '@/api/songlist.js'
 import { likeComment, handleComment, getallsongs } from '@/api/song.js'
 export default {
   name: 'ListDetailIndex',
@@ -155,7 +176,11 @@ export default {
       songs: [],
       replyCode: 0,
       commentId: 0,
-      loading: false
+      loading: false,
+      visible: false,
+      userlist: [],
+      addsong: {},
+      dialogloading: true
     }
   },
   created () {
@@ -205,6 +230,33 @@ export default {
     }
   },
   methods: {
+    selectlist (item, index) {
+      const timestamp = Date.parse(new Date())
+      handlesonglist('add', item.id, this.addsong.id, timestamp).then(res => {
+        console.log(res)
+        this.visible = false
+        if (res.data.body.code === 502) {
+          this.$message({
+            type: 'warning',
+            message: '歌单内已经有这首歌了哦'
+          })
+        } else {
+          this.$message('添加成功')
+        }
+      })
+    },
+    addtolist (item) {
+      const timestamp = Date.parse(new Date())
+      this.visible = true
+      this.addsong = item
+      userPlayList(localStorage.getItem('userID'), 0, timestamp).then(res => {
+        this.userlist = res.data.playlist
+        this.dialogloading = false
+      })
+    },
+    download () {
+      this.$message('请到官方客户端下载哦~')
+    },
     playall () {
       this.$store.commit('intoplaying', this.songs[0])
       this.$store.commit('publishList', this.songs)
@@ -526,7 +578,7 @@ export default {
   }
   .alb-bar {
     display: inline-block;
-    width: 250px;
+    width: 225px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -541,6 +593,13 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: middle;
+  }
+  .menu_bar{
+    display: inline-block;
+    width: 25px;
+    vertical-align: middle;
+    top: 0;
+    visibility: hidden;
   }
   .head-bar {
     display: inline-block;
@@ -777,5 +836,36 @@ export default {
     align-items: center;
     font-size: 16px;
     color:red
+  }
+  .song-border:hover{
+    opacity: 80%;
+    cursor: pointer;
+    .menu_bar{
+      visibility: visible;
+    }
+  }
+  .list_image{
+  }
+  .list_detail{
+    display: inline-block;
+    font-size: 15px;
+    vertical-align: top;
+    padding: 5px;
+  }
+  .list_name{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 200px;
+    white-space: nowrap;
+  }
+  .list_num{
+    padding-top: 15px;
+  }
+  .list_wrap:hover{
+    cursor: pointer;
+    opacity: 65%;
+  }
+  .selected{
+    background-color: red;
   }
 </style>

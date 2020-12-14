@@ -79,3 +79,19 @@ export const cretalist = name => {
     }
   })
 }
+
+/**
+ * 对歌单添加或删除歌曲
+ */
+export const handlesonglist = (op, pid, tracks, timestamp) => {
+  return request({
+    method: 'GET',
+    url: '/playlist/tracks',
+    params: {
+      op,
+      pid,
+      tracks,
+      timestamp
+    }
+  })
+}
