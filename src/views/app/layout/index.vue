@@ -84,4 +84,8 @@ export default {
   margin-top: 50px;
   flex: 2;
 }
+.item:hover{
+  font-size: 20px;
+  color:red
+}
 </style>

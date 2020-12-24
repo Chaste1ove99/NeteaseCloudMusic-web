@@ -7,7 +7,7 @@
       :src="listdetails.coverImgUrl"
       fit="fill"></el-image>
       <div class="demo-datails">
-        <div class="title"><div class="label">歌单</div>{{listdetails.name}}</div>
+        <div class="title"><div class="label">歌单</div>{{listdetails.name}}<div class="edit_btn" @click="intoedit"><i class="el-icon-edit"></i>编辑</div></div>
         <div class="creator">
           <div class="demo-image">
     <el-image
@@ -149,7 +149,7 @@
           <div class="list_num">{{item.trackCount}}首</div>
       </div>
   </div>
-                                    </el-dialog>
+  </el-dialog>
 </div>
 </template>
 <script>
@@ -230,6 +230,10 @@ export default {
     }
   },
   methods: {
+    // 进入编辑页面
+    intoedit () {
+      this.$router.push('/app/listedit?id=' + this.$route.query.id)
+    },
     selectlist (item, index) {
       const timestamp = Date.parse(new Date())
       handlesonglist('add', item.id, this.addsong.id, timestamp).then(res => {
@@ -491,9 +495,13 @@ export default {
   .title {
     font-size: 22px;
     font-weight: bold;
+    width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .label {
-    display: inline;
+    display: inline-block;
     font-size: 15px;
     border: 1px solid red;
     border-radius: 5px;
@@ -867,5 +875,14 @@ export default {
   }
   .selected{
     background-color: red;
+  }
+  .edit_btn{
+    display: inline-block;
+    padding-left: 250px;
+    font-size: 14px;
+    font-weight: normal;
+  }
+  .edit_btn:hover{
+    cursor: pointer;
   }
 </style>

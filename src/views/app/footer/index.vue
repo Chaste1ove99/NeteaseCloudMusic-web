@@ -3,7 +3,6 @@
       <el-slider v-model="sliderTime" @change="changeCurrentTime" class="slider" :format-tooltip="formatTooltip"></el-slider>
       <div class="playing-container">
         <audio :src="playing.musicurl" ref="audioA" autoplay=“true” @loadedmetadata='loaded' @timeupdate='updateSlider' @ended="ended"></audio>
-      <!--这里判断空对象的方法 详情csdn https://blog.csdn.net/qq_18671415/article/details/105014700-->
       <el-image
       class="pic"
       :src='playing.al.picUrl'
@@ -34,7 +33,7 @@
         </div>
       </div>
       </div>
-      <div v-show="show" class="list_page">
+      <div class="list_page" v-show="show">
             <div class="list_warp">
         <div class="playlist_wrap">
             <div class="list_title">播放列表</div>
@@ -48,7 +47,7 @@
        <div class="lyrics_wrap">
            <div class="lyrics_title">{{playing.name}}</div>
            <div class="lyrics_block" id="lycBlock">
-             <div v-for="(item,index) in lyric" :key="index" class="single_lys" :id="item.time">{{item.lys}}</div>
+             <div v-for="(item,index) in lyric" :key="index" class="single_lys" :id="item.time" @click="slidertime(item)">{{item.lys}}</div>
            </div>
            </div>
       </div>
@@ -104,7 +103,11 @@ export default {
       this.$store.commit('intoplaying', item)
     },
     openlist () {
-      this.show = !this.show
+      if (this.show === false) {
+        this.show = true
+      } else {
+        this.show = false
+      }
     },
     changevol (e) {
       this.$refs.audioA.volume = e / 100
@@ -261,7 +264,7 @@ export default {
     },
     // 操作dom动画 可以添加防抖等功能
     con () {
-      if (this.$refs.audioA.currentTime) {
+      if (this.$refs.audioA) {
         const domID = Math.round(this.$refs.audioA.currentTime)
         const dom = document.getElementById(domID)
         if (dom) {
@@ -275,6 +278,26 @@ export default {
         } else {
           return false
         }
+      }
+    },
+    // 操作歌词时间
+    slidertime (item) {
+      this.$refs.audioA.currentTime = item.time
+      const domID = Math.round(this.$refs.audioA.currentTime)
+      const dom = document.getElementById(domID)
+      if (dom) {
+        // 其他全部元素移除
+        dom.parentNode.children.forEach(v => {
+          console.log(v.classList)
+          v.classList.remove('playing')
+        })
+        dom.classList.add('playing')
+        dom.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      } else {
+        return false
       }
     }
   },
@@ -457,6 +480,7 @@ export default {
 }
 .list_page{
   position: absolute;
+  opacity: 90%;
   top: -250px;
   left: 250px;
     background-color:#fff;
@@ -531,6 +555,10 @@ export default {
             .single_lys{
               text-align: center;
               padding: 5px;
+            }
+            .single_lys:hover{
+              cursor: pointer;
+              opacity: 60%;
             }
         }
         .lyrics_block::-webkit-scrollbar{
