@@ -117,6 +117,8 @@ export default {
       // 进度条的一份进度
       // console.log(index)
       this.$refs.audioA.currentTime = parseInt(index / 100 * this.audio.maxTime)
+      const dom = document.getElementById('lycBlock')
+      dom.children.forEach(v => v.classList.remove('playing'))
     },
     formatTooltip (val) {
       // console.log(this.step)
@@ -273,7 +275,7 @@ export default {
             behavior: 'smooth',
             block: 'center'
           })
-          // 上个元素移除
+          // 元素移除
           dom.previousElementSibling.classList.remove('playing')
         } else {
           return false
