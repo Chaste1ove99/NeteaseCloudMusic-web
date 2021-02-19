@@ -38,7 +38,7 @@ export default {
   position:fixed;
   bottom: 0;
   left: 0;
-  height: 20%;
+  height: 150px;
   width: 100%;
   padding: 0;
   background: #fff;

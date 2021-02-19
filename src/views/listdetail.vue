@@ -485,7 +485,7 @@ export default {
   .songlist {
     margin-left: 40px;
     width: 800px;
-    margin-bottom: 15%;
+    margin-bottom: 20%;
   }
   .demo-datails {
     display: inline-block;
@@ -575,6 +575,7 @@ export default {
   }
   .tabs {
     font-size: 14px;
+    margin-bottom: 20%;
   }
   .song-bar {
     display: inline-block;

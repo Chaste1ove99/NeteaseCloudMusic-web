@@ -389,6 +389,7 @@ export default {
   }
   .tabs {
     font-size: 14px;
+    margin-bottom: 20%;
   }
   .song-bar {
     display: inline-block;
