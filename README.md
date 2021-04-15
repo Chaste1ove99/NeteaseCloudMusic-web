@@ -1,9 +1,6 @@
 # 三方SDK管理
 
-## 基于Node地址
-```
-https://github.com/Binaryify/NeteaseCloudMusicApi
-```
+项目简介
 
 ### 运行前你要做的
 ```
