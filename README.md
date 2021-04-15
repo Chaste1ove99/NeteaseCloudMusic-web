@@ -1,31 +1,70 @@
-# 三方SDK管理
+# 独立版 - 小米隐私合规检测平台
 
-## 项目简介
-【技术概述】：项目以react< 17.0.0>为基础构件的第三方SDK管理项目，使用NPM作为包管理器，引入antd<4.8.6>与Antd Mi作为样式框架。
-* Antd Mi参考文档：  
-【功能概述】：项目主要功能是对第三方SDK进行系统管理，从包名、修改时间、操作人、应用功能等属性直观了解响应SDK的信息，同时可以实现增加、删除、编辑、搜索等主要功能。
-【流程概述】：
+## Project setup
 
-## 项目构建
 ```
-运行上面地址的node 并且执行npm install
+yarn install
 ```
 
-### 功能特性
+### Compiles and hot-reloads for development
+
 ```
-- 强大的流媒体播放器
-- 私信功能稳定的防抖设置 低延迟的即时聊天效果
-- 交互逻辑偏向iPad客户端 更符合现代人的审美
-- 几乎网页端网易云音乐大部分能做的事情
+yarn run serve(mock数据)
+yarn run serve:staging(staging数据)
+
 ```
 
-### 缺少的核心功能
+### Compiles and minifies for production
+
 ```
-- 专辑付费请到官方购买
-- 电台功能暂未开发 动态功能web端体验很差
-- 播放器和歌单内部红心功能
-- 视频下方的评论标签功能(mv下方的已经做好了）
-- 绝大部分收藏功能
+yarn run build
 ```
 
-### 这个web程序仅供学习使用 不作任何商业用途
+## 基本信息
+
+项目是使用 Vue CLI v3 创建的标准单页应用，有一些约定需要特别注意。
+
+### [设计模式](https://wsq.cool/post/maral8)
+
+在 hooks 思想的冲击下，这套设计模式已经过时了，为了迎接马上要到来的 Vue3，建议新页面使用[vue-composition-api](https://github.com/vuejs/composition-api)编写，更合适的设计模式还在摸索中。
+
+### 持续部署
+
+Dev branch push event 会触发 staging 环境的部署， Master branch push event 会触发生产环境的部署。
+
+#### Staging
+
+Host: http://staging.p.sec.miui.com
+
+FDS Region: 武清测试
+
+FDS Bucket: privacy-detection-staging
+
+#### Priview
+
+Host: https://priview.p.sec.miui.com
+
+FDS Region: C3
+
+FDS Bucket: privacy-detection-priview
+
+#### Production
+
+Host: https://p.sec.miui.com
+
+FDS Region: C3
+
+FDS Bucket: privacy-detection
+
+### 代码风格
+
+在提交时会对代码风格进行一次检查，在编辑器中安装 eslint 插件有助于在开发时发现问题。
+
+### 自动路由与布局
+
+使用了[vue-cli-plugin-auto-routing](https://github.com/ktsn/vue-cli-plugin-auto-routing)，请仔细阅读文档。
+
+### Tips
+
+1. 全局样式：`@/assets/style.scss`，全局 scss 变量: `@/assets/var.scss`；
+2. mock 地址：http://mock.be.mi.com/project/946/interface/api。
