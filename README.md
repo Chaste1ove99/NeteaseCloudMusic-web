@@ -21,3 +21,11 @@ npm install
 
 npm start
 ```
+
+---
+
+### 第一期开发
+
+| 前端 | 后端 |                             接口文档                             |
+| :--: | :--: | :--------------------------------------------------------------: |
+| 曹家铭 | 李超 |http://staging.manager.sec.miui.com/phoneManager/swagger-ui.html#/SDK%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E5%90%8E%E5%8F%B0 |
