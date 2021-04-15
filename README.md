@@ -23,91 +23,38 @@ npm start
 
 目录结构说明
 
-sdk_manage
-├─.DS_Store
-├─.editorconfig
-├─.env
-├─.gitignore
-├─.npmrc
-├─.prettierignore
-├─.prettierrc
-├─.umirc.ts
-├─README.md
-├─package.json
-├─tsconfig.json
-├─typings.d.ts
 ├─src
 |  ├─.DS_Store
 |  ├─global.css
 |  ├─global.less
-|  ├─type.d.ts
+|  ├─type.d.ts (变量接口文件）
 |  ├─utils
 |  |   └modelUtils.ts
 |  ├─pages
 |  |   ├─index.css
 |  |   ├─index.less
-|  |   ├─index.tsx
-|  |   ├─whitelist
+|  |   ├─index.tsx 
+|  |   ├─sdkmanage
 |  |   |     ├─index.less
-|  |   |     ├─index.tsx
+|  |   |     ├─index.tsx（项目入口文件）
 |  |   |     ├─services
-|  |   |     |    └whitelist.ts
+|  |   |     |    └sdkmanage.ts （api接口文件）
 |  |   |     ├─models
-|  |   |     |   └whitelist.ts
+|  |   |     |   └sdkmanage.ts （项目模板组件）
 |  |   |     ├─components
+|  |   |     |     ├─Delete.css 
+|  |   |     |     ├─Delete.less
+|  |   |     |     ├─Delete.tsx （删除弹窗组件）
 |  |   |     |     ├─Detail.less
-|  |   |     |     ├─Detail.tsx
+|  |   |     |     ├─Detail.tsx （详情弹窗组件）
+|  |   |     |     ├─Edit.css
 |  |   |     |     ├─Edit.less
-|  |   |     |     ├─Edit.tsx
+|  |   |     |     ├─Edit.tsx （编辑/新增功能弹窗组件）
 |  |   |     |     ├─Header.less
-|  |   |     |     ├─Header.tsx
-|  |   |     |     ├─TableList.tsx
+|  |   |     |     ├─Header.tsx （项目顶部栏组件）
+|  |   |     |     ├─TableList.tsx （项目列表组件）
 |  |   |     |     ├─TotalNum.less
-|  |   |     |     └TotalNum.tsx
-├─mock
-|  ├─.gitkeep
-|  └whitelist.ts
-├─.git
-|  ├─HEAD
-|  ├─config
-|  ├─description
-|  ├─index
-|  ├─packed-refs
-|  ├─refs
-|  |  ├─tags
-|  |  ├─remotes
-|  |  |    ├─origin
-|  |  |    |   └HEAD
-|  |  ├─heads
-|  |  |   └master
-|  ├─objects
-|  |    ├─pack
-|  |    |  ├─pack-0e38d4573f59c57496199e443d7e3f23725db117.idx
-|  |    |  └pack-0e38d4573f59c57496199e443d7e3f23725db117.pack
-|  |    ├─info
-|  ├─logs
-|  |  ├─HEAD
-|  |  ├─refs
-|  |  |  ├─remotes
-|  |  |  |    ├─origin
-|  |  |  |    |   └HEAD
-|  |  |  ├─heads
-|  |  |  |   └master
-|  ├─info
-|  |  └exclude
-|  ├─hooks
-|  |   ├─applypatch-msg.sample
-|  |   ├─commit-msg.sample
-|  |   ├─fsmonitor-watchman.sample
-|  |   ├─post-update.sample
-|  |   ├─pre-applypatch.sample
-|  |   ├─pre-commit.sample
-|  |   ├─pre-merge-commit.sample
-|  |   ├─pre-push.sample
-|  |   ├─pre-rebase.sample
-|  |   ├─pre-receive.sample
-|  |   ├─prepare-commit-msg.sample
-|  |   └update.sample
+|  |   |     |     └TotalNum.tsx （项目顶部数量组件）
 ```
 
 ---
